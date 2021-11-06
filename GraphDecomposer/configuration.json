@@ -1,0 +1,16 @@
+{
+	"tests": [
+		{
+			"directed": false,
+			"nVertices": 32,
+			"nTests": 100,
+			"testFile": "InputData\\test32.txt"
+		},
+		{
+			"directed": false,
+			"nVertices": 32,
+			"nTests": 100,
+			"testFile": "InputData\\test32.txt"
+		}
+	]
+}
