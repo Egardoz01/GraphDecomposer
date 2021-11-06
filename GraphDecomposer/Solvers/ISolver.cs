@@ -7,6 +7,6 @@ namespace GrubiTest.Solvers
 {
     public interface ISolver
     {
-        SolverResult Solve(ProblemInput input);
+        SolverResult SolveTest(TestInput input, TestConfiguration conf);
     }
 }

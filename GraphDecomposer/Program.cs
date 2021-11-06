@@ -36,7 +36,8 @@ namespace GrubiTest
             {
                 Stopwatch timeTracker = new Stopwatch();
                 timeTracker.Start();
-                var res = solver.Solve(p);
+      
+                var res = solver.SolveTest(p, conf);
                 timeTracker.Stop();
 
                 res.millisecondsElapsed = timeTracker.ElapsedMilliseconds;

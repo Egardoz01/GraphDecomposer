@@ -49,31 +49,35 @@ namespace GrubiTest
 
             if (solvedTime.Count>0)
             {
-                Console.WriteLine($"Feasible average time {countAverage(solvedTime)}");
-                Console.WriteLine($"Feasible time dispersion {countDispersion(solvedTime)}");
-                Console.WriteLine($"Feasible average iterations {countAverage(solvedIterations)}");
-                Console.WriteLine($"Feasible iterations dispersion {countDispersion(solvedIterations)}");
+                Console.WriteLine($"Feasible Tests count: {solvedTime.Count}");
+                Console.WriteLine($"Feasible M(time) {countM(solvedTime)}");
+                Console.WriteLine($"Feasible Sd(time) {countSd(solvedTime)}");
+                Console.WriteLine($"Feasible M(iterations) {countM(solvedIterations)}");
+                Console.WriteLine($"Feasible Sd(iterations) {countSd(solvedIterations)}");
             }
             if (unsolvedTime.Count > 0)
             {
-                Console.WriteLine($"Infeasible average time {countAverage(unsolvedTime)}");
-                Console.WriteLine($"Infeasible time dispersion {countDispersion(unsolvedTime)}");
-                Console.WriteLine($"Infeasible average iterations {countAverage(unsolvedIterations)}");
-                Console.WriteLine($"Infeasible iterations dispersion {countDispersion(unsolvedIterations)}");
+                Console.WriteLine($"Infeasible Tests count: {unsolvedTime.Count}");
+                Console.WriteLine($"Infeasible M(time) {countM(unsolvedTime)}");
+                Console.WriteLine($"Infeasible Sd(time) {countSd(unsolvedTime)}");
+                Console.WriteLine($"Infeasible M(iterations) {countM(unsolvedIterations)}");
+                Console.WriteLine($"Infeasible Sd(iterations) {countSd(unsolvedIterations)}");
             }
+
+            Console.WriteLine($"");
         }
 
 
-        private double countAverage(List<double> v)
+        private double countM(List<double> v)
         {
            return v.Sum()/v.Count;
         }
 
-        private double countDispersion(List<double> v)
+        private double countSd(List<double> v)
         {
-            double M = countAverage(v);
+            double M = countM(v);
 
-            return v.Select(x => (x - M) * (x - M)).Sum() / v.Count;
+            return Math.Sqrt(v.Select(x => (x - M) * (x - M)).Sum() / v.Count);
         }
 
     }

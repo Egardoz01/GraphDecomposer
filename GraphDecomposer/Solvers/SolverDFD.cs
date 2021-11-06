@@ -12,11 +12,12 @@ namespace GrubiTest
         private GRBEnv env;
         private Multigraph multiGraph;
         private GRBModel model;
-        List<GRBVar> variables;
-
+        private List<GRBVar> variables;
+        private TestConfiguration conf;
         int ciclesCnt = 0;
         public SolverDFD()
         {
+
             env = new GRBEnv(true);
             env.Set("LogFile", "mip1.log");
             env.OutputFlag = 0;
@@ -25,17 +26,18 @@ namespace GrubiTest
 
 
 
-        public SolverResult Solve(ProblemInput input)
+        public SolverResult SolveTest(TestInput input, TestConfiguration conf)
         {
+
+            this.conf = conf;
+
             ciclesCnt = 0;
 
             model = new GRBModel(env);
 
-            multiGraph = new Multigraph(input.x, input.y);
+            multiGraph = new Multigraph(input.x, input.y, conf.directed);
 
             addVariables();
-
-            model.SetObjective(variables[0] + variables[1]);
 
             addVariablesConstr();
 
@@ -140,11 +142,12 @@ namespace GrubiTest
             foreach (var edge in edges)
             {
                 g[edge.from].Add(edge);
-                g[edge.to].Add(edge);
+                if(!conf.directed)
+                    g[edge.to].Add(edge);
             }
             usedEdges = new List<bool>();
             usedVertices = new List<bool>();
-            
+
             for (int i = 0; i <= multiGraph.nEdges; i++)
                 usedEdges.Add(false);
 
@@ -179,22 +182,42 @@ namespace GrubiTest
         {
             for (int i = 1; i <= multiGraph.nVertices; i++)
             {
-                GRBLinExpr expr = new GRBLinExpr();
-
-
-                foreach (int id in multiGraph.adjacencyList[i])
+                if (!conf.directed)
                 {
-                    expr.Add(1 * variables[id - 1]);
-                }
+                    GRBLinExpr expr = new GRBLinExpr();
 
-                model.AddConstr(expr == 2, $"V{i} constr");
+                    foreach (int id in multiGraph.edgesFrom[i])
+                    {
+                        expr.Add(1 * variables[id - 1]);
+                    }
+
+                    model.AddConstr(expr == 2, $"V{i} constr");
+                }
+                else
+                {
+                    GRBLinExpr expr1 = new GRBLinExpr();
+
+                    foreach (int id in multiGraph.edgesFrom[i])
+                    {
+                        expr1.Add(1 * variables[id - 1]);
+                    }
+
+                    model.AddConstr(expr1 == 1, $"V{i} 1_constr");
+
+                    GRBLinExpr expr2 = new GRBLinExpr();
+
+                    foreach (int id in multiGraph.edgesTo[i])
+                    {
+                        expr2.Add(1 * variables[id - 1]);
+                    }
+
+                    model.AddConstr(expr2 == 1, $"V{i} 2_constr");
+                }
             }
         }
 
         private void addCicleConstr(List<Edge> cicle)
         {
-
-
             HashSet<int> S = new HashSet<int>();
 
             foreach (var edge in cicle)

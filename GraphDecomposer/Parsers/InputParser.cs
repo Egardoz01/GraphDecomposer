@@ -6,10 +6,10 @@ using System.Text;
 
 namespace GrubiTest
 {
-    public class InputParser : IEnumerable<ProblemInput>
+    public class InputParser : IEnumerable<TestInput>
     {
 
-        private List<ProblemInput> graphs;
+        private List<TestInput> graphs;
 
         public InputParser(string filePath, int nProblems)
         {
@@ -17,11 +17,11 @@ namespace GrubiTest
             {
                 var lines = File.ReadAllLines(filePath);
 
-                graphs = new List<ProblemInput>();
+                graphs = new List<TestInput>();
                 int cur = 0;
                 for (int i = 0; i < nProblems; i++)
                 {
-                    ProblemInput input = new ProblemInput();
+                    TestInput input = new TestInput();
                     input.x = GraphParser.parce(lines[cur++]);
 
                     input.y = GraphParser.parce(lines[cur++]);
@@ -37,7 +37,7 @@ namespace GrubiTest
 
         }
 
-        public IEnumerator<ProblemInput> GetEnumerator()
+        public IEnumerator<TestInput> GetEnumerator()
         {
             foreach (var item in graphs)
             {

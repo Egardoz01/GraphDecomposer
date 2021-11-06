@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GrubiTest
 {
-    public class ProblemInput
+    public class TestInput
     {
         public Graph x;
         public Graph y;
