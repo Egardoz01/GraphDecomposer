@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GrubiTest
+namespace GraphDecomposer
 {
     public class TestInput
     {

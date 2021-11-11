@@ -1,11 +1,11 @@
-﻿using GrubiTest.DataStructures;
-using GrubiTest.Solvers;
+﻿using GraphDecomposer.DataStructures;
+using GraphDecomposer.Solvers;
 using Gurobi;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GrubiTest
+namespace GraphDecomposer
 {
     public class SolverDFD : ISolver
     {
@@ -47,11 +47,6 @@ namespace GrubiTest
 
 
             var res = doIterations();
-
-            /*foreach (var variable in variables)
-            {
-                Console.WriteLine(variable.VarName + ": " + variable.X);
-            }*/
 
             model.Dispose();
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace GrubiTest
+namespace GraphDecomposer
 {
     public static class GraphParser
     {

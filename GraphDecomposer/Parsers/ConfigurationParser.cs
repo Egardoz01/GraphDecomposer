@@ -1,4 +1,4 @@
-﻿using GrubiTest.DataStructures;
+﻿using GraphDecomposer.DataStructures;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Text;
 using Newtonsoft;
 using Newtonsoft.Json.Linq;
 
-namespace GrubiTest.Parsers
+namespace GraphDecomposer.Parsers
 {
     public static class ConfigurationParser
     {

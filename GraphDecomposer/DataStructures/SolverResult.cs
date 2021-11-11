@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GrubiTest.DataStructures
+namespace GraphDecomposer.DataStructures
 {
     public struct SolverResult
     {

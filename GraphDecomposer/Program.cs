@@ -1,18 +1,19 @@
-﻿using GrubiTest.DataStructures;
-using GrubiTest.Parsers;
-using GrubiTest.Solvers;
+﻿using GraphDecomposer.DataStructures;
+using GraphDecomposer.Parsers;
+using GraphDecomposer.Solvers;
 using Gurobi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace GrubiTest
+namespace GraphDecomposer
 {
     class Program
     {
         static void Main(string[] args)
         {
-            TestDFD();
+           // TestDFD();
+            TestMTZ();
         }
 
 
@@ -25,6 +26,17 @@ namespace GrubiTest
                 DoTest(solver, test);
             }
         }
+
+        static void TestMTZ()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverMTZ solver = new SolverMTZ();
+            foreach (var test in conf)
+            {
+                DoTest(solver, test);
+            }
+        }
+
 
         static void DoTest(ISolver solver, TestConfiguration conf)
         {
