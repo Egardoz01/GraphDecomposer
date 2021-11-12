@@ -8,6 +8,7 @@
   <ItemGroup>
     <None Remove="configuration.json" />
     <None Remove="InputData\SimpleInput.txt" />
+    <None Remove="InputData\test1024.txt" />
     <None Remove="InputData\test128.txt" />
     <None Remove="InputData\test192.txt" />
     <None Remove="InputData\test256.txt" />
@@ -23,6 +24,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputData\SimpleInput.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputData\test1024.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputData\test128.txt">
@@ -59,6 +63,12 @@
     <Reference Include="gurobi91.netstandard20">
       <HintPath>..\..\..\..\..\gurobi912\win64\lib\gurobi91.netstandard20.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="InputData\test10p.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

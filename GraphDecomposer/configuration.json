@@ -1,10 +1,11 @@
 {
 	"tests": [
 		{
-			"directed": true,
-			"nVertices": 256,
+			"directed": false,
+			"nVertices": 192,
 			"nTests": 100,
-			"testFile": "InputData\\test256.txt"
+			"testFile": "InputData\\test192.txt"
 		}
+
 	]
 }

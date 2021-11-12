@@ -12,7 +12,7 @@ namespace GraphDecomposer
     {
         static void Main(string[] args)
         {
-           // TestDFD();
+            //TestDFD();
             TestMTZ();
         }
 
@@ -44,8 +44,10 @@ namespace GraphDecomposer
 
             ResultAnalyses results = new ResultAnalyses(conf);
 
+            int cnt = 1;
             foreach (var p in input)
             {
+                Console.WriteLine("#running test " + cnt++);
                 Stopwatch timeTracker = new Stopwatch();
                 timeTracker.Start();
       

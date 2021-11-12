@@ -6,8 +6,6 @@ namespace GraphDecomposer.DataStructures
 {
     public class Multigraph : Graph
     {
-        public List<List<int>> edgesFrom;
-        public List<List<int>> edgesTo;
         public HashSet<Edge> xEdges;
         public HashSet<Edge> yEdges;
         public bool directed;
