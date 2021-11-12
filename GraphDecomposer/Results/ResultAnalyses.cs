@@ -1,19 +1,22 @@
 ﻿using GraphDecomposer.DataStructures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace GraphDecomposer
+namespace GraphDecomposer.Results
 {
     public class ResultAnalyses
     {
         private List<SolverResult> solverResults;
         private readonly TestConfiguration conf;
+
         public ResultAnalyses(TestConfiguration conf)
         {
             this.conf = conf;
             solverResults = new List<SolverResult>();
+
         }
 
         public void addResult(SolverResult res)
@@ -41,36 +44,48 @@ namespace GraphDecomposer
                     unsolvedIterations.Add(res.iterationsCnt);
                 }
             }
+            List<string> lines = new List<string>(); ;
 
-            Console.WriteLine($"Test File {conf.testFile}");
-            Console.WriteLine((conf.directed ? "directed" : "undirected") + " graph");
-            Console.WriteLine($"Vertex amount {conf.nVertices}");
-            Console.WriteLine($"Tests amount {conf.nTests}");
+            lines.Add($"Test File {conf.testFile}");
+            lines.Add((conf.directed ? "directed" : "undirected") + " graph");
+            lines.Add($"Vertex amount {conf.nVertices}");
+            lines.Add($"Tests amount {conf.nTests}");
 
-            if (solvedTime.Count>0)
+
+
+            if (solvedTime.Count > 0)
             {
-                Console.WriteLine($"Feasible Tests count: {solvedTime.Count}");
-                Console.WriteLine($"Feasible M(time) {countM(solvedTime)}");
-                Console.WriteLine($"Feasible Sd(time) {countSd(solvedTime)}");
-                Console.WriteLine($"Feasible M(iterations) {countM(solvedIterations)}");
-                Console.WriteLine($"Feasible Sd(iterations) {countSd(solvedIterations)}");
+                lines.Add($"Feasible Tests count: {solvedTime.Count}");
+                lines.Add($"Feasible M(time) {countM(solvedTime)}");
+                lines.Add($"Feasible Sd(time) {countSd(solvedTime)}");
+                lines.Add($"Feasible M(iterations) {countM(solvedIterations)}");
+                lines.Add($"Feasible Sd(iterations) {countSd(solvedIterations)}");
             }
             if (unsolvedTime.Count > 0)
             {
-                Console.WriteLine($"Infeasible Tests count: {unsolvedTime.Count}");
-                Console.WriteLine($"Infeasible M(time) {countM(unsolvedTime)}");
-                Console.WriteLine($"Infeasible Sd(time) {countSd(unsolvedTime)}");
-                Console.WriteLine($"Infeasible M(iterations) {countM(unsolvedIterations)}");
-                Console.WriteLine($"Infeasible Sd(iterations) {countSd(unsolvedIterations)}");
+                lines.Add($"Infeasible Tests count: {unsolvedTime.Count}");
+                lines.Add($"Infeasible M(time) {countM(unsolvedTime)}");
+                lines.Add($"Infeasible Sd(time) {countSd(unsolvedTime)}");
+                lines.Add($"Infeasible M(iterations) {countM(unsolvedIterations)}");
+                lines.Add($"Infeasible Sd(iterations) {countSd(unsolvedIterations)}");
             }
 
-            Console.WriteLine($"");
+            lines.Add($"");
+            lines.Add($"");
+
+            foreach (var s in lines)
+            {
+                Console.WriteLine(s);
+            }
+
+            File.AppendAllLines("results.txt", lines);
+
         }
 
 
         private double countM(List<double> v)
         {
-           return v.Sum()/v.Count;
+            return v.Sum() / v.Count;
         }
 
         private double countSd(List<double> v)

@@ -1,5 +1,6 @@
 ﻿using GraphDecomposer.DataStructures;
 using GraphDecomposer.Parsers;
+using GraphDecomposer.Results;
 using GraphDecomposer.Solvers;
 using Gurobi;
 using System;
@@ -12,8 +13,16 @@ namespace GraphDecomposer
     {
         static void Main(string[] args)
         {
-            //TestDFD();
-            TestMTZ();
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFD solverDFD = new SolverDFD();
+            SolverDFD solverMTZ = new SolverDFD();
+            foreach (var test in conf)
+            {
+                if (test.model == "dfd")
+                    DoTest(solverDFD, test);
+                else
+                    DoTest(solverMTZ, test);
+            }
         }
 
 

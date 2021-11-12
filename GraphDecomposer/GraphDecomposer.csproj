@@ -17,6 +17,7 @@
     <None Remove="InputData\test512.txt" />
     <None Remove="InputData\test64.txt" />
     <None Remove="InputData\test64p.txt" />
+    <None Remove="InputData\test768.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +52,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputData\test64.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputData\test768.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -6,6 +6,7 @@ namespace GraphDecomposer.DataStructures
 {
     public struct TestConfiguration
     {
+        public string model;
         public bool directed;
         public int nVertices;
         public int nTests;
