@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GraphDecomposer.Solvers
 {
-    public class SolverNTZ_UnDirected
+    public class SolverNTZ_UnDirected : ISolver
     {
         private GRBEnv env;
         private Multigraph multiGraph;
@@ -177,42 +177,42 @@ namespace GraphDecomposer.Solvers
             {
                 GRBLinExpr expr1 = new GRBLinExpr();
 
-                foreach (int id in multiGraph.edgesFrom[i])
+                foreach (var edge in multiGraph.edgesFrom[i])
                 {
-                    expr1.Add(1 * w_1[id]);
+                    expr1.Add(1 * w_1[edge.Id]);
                 }
 
-                foreach (int id in multiGraph.edgesTo[i])
+                foreach (var edge in multiGraph.edgesTo[i])
                 {
-                    expr1.Add(1 * w_2[id]);
+                    expr1.Add(1 * w_2[edge.Id]);
                 }
 
                 model.AddConstr(expr1 == 1, $"V{i} w2_constr");
 
                 GRBLinExpr expr2 = new GRBLinExpr();
 
-                foreach (int id in multiGraph.edgesTo[i])
+                foreach( var edge in multiGraph.edgesTo[i])
                 {
-                    expr2.Add(1 * w_1[id]);
+                    expr2.Add(1 * w_1[edge.Id]);
                 }
 
-                foreach (int id in multiGraph.edgesFrom[i])
+                foreach (var edge in multiGraph.edgesFrom[i])
                 {
-                    expr2.Add(1 * w_2[id]);
+                    expr2.Add(1 * w_2[edge.Id]);
                 }
 
                 model.AddConstr(expr2 == 1, $"V{i} w2_constr");
 
                 GRBLinExpr expr3 = new GRBLinExpr();
 
-                foreach (int id in multiGraph.edgesFrom[i])
+                foreach (var edge in multiGraph.edgesFrom[i])
                 {
-                    expr3.Add(1 * z_1[id]);
+                    expr3.Add(1 * z_1[edge.Id]);
                 }
 
-                foreach (int id in multiGraph.edgesTo[i])
+                foreach (var edge in multiGraph.edgesTo[i])
                 {
-                    expr3.Add(1 * z_2[id]);
+                    expr3.Add(1 * z_2[edge.Id]);
                 }
 
                 model.AddConstr(expr3 == 1, $"V{i} z2_constr");
@@ -220,14 +220,14 @@ namespace GraphDecomposer.Solvers
 
                 GRBLinExpr expr4 = new GRBLinExpr();
 
-                foreach (int id in multiGraph.edgesTo[i])
+                foreach (var edge in multiGraph.edgesTo[i])
                 {
-                    expr4.Add(1 * z_1[id]);
+                    expr4.Add(1 * z_1[edge.Id]);
                 }
 
-                foreach (int id in multiGraph.edgesFrom[i])
+                foreach (var edge in multiGraph.edgesFrom[i])
                 {
-                    expr4.Add(1 * z_2[id]);
+                    expr4.Add(1 * z_2[edge.Id]);
                 }
 
                 model.AddConstr(expr4 == 1, $"V{i} z2_constr");

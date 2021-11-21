@@ -46,6 +46,7 @@ namespace GraphDecomposer.Results
             }
             List<string> lines = new List<string>(); ;
 
+            lines.Add($"Model {conf.model}");
             lines.Add($"Test File {conf.testFile}");
             lines.Add((conf.directed ? "directed" : "undirected") + " graph");
             lines.Add($"Vertex amount {conf.nVertices}");

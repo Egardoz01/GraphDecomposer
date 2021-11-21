@@ -11,5 +11,7 @@ namespace GraphDecomposer.DataStructures
         public int nVertices;
         public int nTests;
         public string testFile;
+        public int solvable;
+        public int unsolvable;
     }
 }

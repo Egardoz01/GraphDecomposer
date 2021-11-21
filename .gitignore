@@ -1,3 +1,5 @@
 /.vs/
 /GraphDecomposer/bin/
 /GraphDecomposer/obj
+/TestProject/bin
+/TestProject/obj

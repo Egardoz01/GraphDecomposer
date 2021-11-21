@@ -1,120 +1,44 @@
 {
   "tests": [
-    {
-      "model": "dfd",
-      "directed": true,
-      "nVertices": 192,
-      "nTests": 100,
-      "testFile": "InputData\\test192.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": true,
-      "nVertices": 256,
-      "nTests": 100,
-      "testFile": "InputData\\test256.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": true,
-      "nVertices": 512,
-      "nTests": 100,
-      "testFile": "InputData\\test512.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": true,
-      "nVertices": 768,
-      "nTests": 100,
-      "testFile": "InputData\\test768.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": false,
-      "nVertices": 192,
-      "nTests": 100,
-      "testFile": "InputData\\test192.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": false,
-      "nVertices": 256,
-      "nTests": 100,
-      "testFile": "InputData\\test256.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": false,
-      "nVertices": 512,
-      "nTests": 100,
-      "testFile": "InputData\\test512.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": false,
-      "nVertices": 768,
-      "nTests": 100,
-      "testFile": "InputData\\test768.txt"
-    },
-
-
-
 
     {
       "model": "mtz",
-      "directed": true,
-      "nVertices": 192,
+      "directed": false,
+      "nVertices": 64,
       "nTests": 100,
-      "testFile": "InputData\\test192.txt"
-    },
-    {
-      "model": "mtz",
-      "directed": true,
-      "nVertices": 256,
-      "nTests": 100,
-      "testFile": "InputData\\test256.txt"
-    },
-    {
-      "model": "mtz",
-      "directed": true,
-      "nVertices": 512,
-      "nTests": 100,
-      "testFile": "InputData\\test512.txt"
-    },
-    {
-      "model": "mtz",
-      "directed": true,
-      "nVertices": 768,
-      "nTests": 100,
-      "testFile": "InputData\\test768.txt"
+      "testFile": "InputData\\test64.txt",
+      "solvable": 100,
+      "unsolvable": 0
     },
     {
       "model": "mtz",
       "directed": false,
-      "nVertices": 192,
-      "nTests": 100,
-      "testFile": "InputData\\test192.txt"
-    },
-    {
-      "model": "mtz",
-      "directed": false,
-      "nVertices": 256,
-      "nTests": 100,
-      "testFile": "InputData\\test256.txt"
-    },
-    {
-      "model": "mtz",
-      "directed": false,
-      "nVertices": 512,
-      "nTests": 100,
-      "testFile": "InputData\\test512.txt"
-    },
-    {
-      "model": "mtz",
-      "directed": false,
-      "nVertices": 768,
-      "nTests": 100,
-      "testFile": "InputData\\test768.txt"
+      "nVertices": 64,
+      "nTests": 10,
+      "testFile": "InputData\\test64p.txt",
+      "solvable": 0,
+      "unsolvable": 10
     }
+
+    /*
+    ,
+    {
+      "model": "dfd",
+      "directed": true,
+      "nVertices": 64,
+      "nTests": 100,
+      "testFile": "InputData\\test64.txt",
+      "solvable": 100,
+      "unsolvable": 0
+    },
+    {
+      "model": "dfd",
+      "directed": true,
+      "nVertices": 64,
+      "nTests": 10,
+      "testFile": "InputData\\test64p.txt",
+      "solvable": 0,
+      "unsolvable": 10
+    }*/
   ]
 }

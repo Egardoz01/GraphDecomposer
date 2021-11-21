@@ -15,7 +15,7 @@ namespace GraphDecomposer
         {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFD solverDFD = new SolverDFD();
-            SolverDFD solverMTZ = new SolverDFD();
+            SolverMTZ solverMTZ = new SolverMTZ();
             foreach (var test in conf)
             {
                 if (test.model == "dfd")

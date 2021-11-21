@@ -15,15 +15,15 @@ namespace GraphDecomposer
         private List<GRBVar> variables;
         private TestConfiguration conf;
         int ciclesCnt = 0;
+        private Random r;
         public SolverDFD()
         {
-
+            r = new Random();
             env = new GRBEnv(true);
             env.Set("LogFile", "mip1.log");
             env.OutputFlag = 0;
             env.Start();
         }
-
 
 
         public SolverResult SolveTest(TestInput input, TestConfiguration conf)
@@ -66,23 +66,30 @@ namespace GraphDecomposer
                 bool hasSol = model.SolCount > 0;
 
                 if (!hasSol)
-                    return new SolverResult(iterationsCnt, false);// yes solution
+                    return new SolverResult(iterationsCnt, false);// no solution
 
-                List<Edge> z = new List<Edge>();
-                List<Edge> w = new List<Edge>();
+                List<Edge> z_Edges = new List<Edge>();
+                List<Edge> w_Edges = new List<Edge>();
 
-                foreach (var v in variables)
+                for (int i=1; i<=multiGraph.nEdges; i++)
                 {
-                    //Console.WriteLine(v.VarName + ":  " + v.X);
-                    int ind = int.Parse(v.VarName.Substring(1)) - 1;
+                    var v = variables[i];
                     if (v.X == 0)
-                        z.Add(multiGraph.edges[ind]);
+                        z_Edges.Add(multiGraph.edges[i-1]);
                     else
-                        w.Add(multiGraph.edges[ind]);
+                        w_Edges.Add(multiGraph.edges[i-1]);
                 }
 
-                var zSubCicles = findSubCicles(z);
-                var wSubCicles = findSubCicles(w);
+                Graph z = new Graph(multiGraph.nVertices, z_Edges, conf.directed);
+                Graph w = new Graph(multiGraph.nVertices, w_Edges, conf.directed);
+
+                bool repeat = true;
+
+
+                // while (repeat)
+                // {
+                var zSubCicles = z.findSubCicles();
+                var wSubCicles = w.findSubCicles();
                 if (zSubCicles.Count == 0 && wSubCicles.Count == 0)
                     return new SolverResult(iterationsCnt, true);// yes solution
 
@@ -91,82 +98,113 @@ namespace GraphDecomposer
                 foreach (var cicle in wSubCicles)
                     addCicleConstr(cicle);
 
+                //  if (conf.directed)
+                //  repeat = LocalSearchDirected(z, w);
+                // }
+
             }
         }
+        List<int> colors;
 
-
-
-
-
-        List<bool> usedEdges;
-        List<bool> usedVertices;
-        List<List<Edge>> g;
-        List<Edge> currentCicle;
-        private void dfs(int x)
+        private void Chain_Edge_Fixing_Directed(Graph z, Graph w, Edge e)
         {
-            usedVertices[x] = true;
-            foreach (var edge in g[x])
+            colors[e.Id] = 1;
+            z.Remove(e);
+            w.Add(e);
+
+            foreach (var edge in w.edgesFrom[e.from])
             {
-                int y;
-                if (edge.from == x)
+                if (colors[edge.Id] != 0)
                 {
-                    y = edge.to;
+                    Chain_Edge_Fixing_Directed(w, z, e);
                 }
-                else
-                {
-                    y = edge.from;
-                }
-
-                if (!usedEdges[edge.Id])
-                {
-                    usedEdges[edge.Id] = true;
-                    currentCicle.Add(edge);
-                    dfs(y);
-                }
-
             }
+
+            foreach (var edge in w.edgesTo[e.to])
+            {
+                if (colors[edge.Id] != 0)
+                {
+                    Chain_Edge_Fixing_Directed(w, z, e);
+                }
+            }
+
+
+
         }
 
-        private List<List<Edge>> findSubCicles(List<Edge> edges)
+        private bool LocalSearchDirected(Graph z, Graph w)
         {
-            List<List<Edge>> cicles = new List<List<Edge>>();
 
-            g = new List<List<Edge>>();
-            for (int i = 0; i <= multiGraph.nVertices; i++)
-                g.Add(new List<Edge>());
-            foreach (var edge in edges)
+            colors = new List<int>();//0 1->z 2->w
+            List<bool> checked_edges = new List<bool>();
+            for (int i = 1; i <= multiGraph.nEdges; i++)
+                colors.Add(0);
+
+            foreach (Edge e in z.edges)
             {
-                g[edge.from].Add(edge);
-                if(!conf.directed)
-                    g[edge.to].Add(edge);
-            }
-            usedEdges = new List<bool>();
-            usedVertices = new List<bool>();
+                var same_edge = w.edges.FindAll(x => x.from == e.from && x.to == e.to);
 
-            for (int i = 0; i <= multiGraph.nEdges; i++)
-                usedEdges.Add(false);
-
-            for (int i = 0; i <= multiGraph.nVertices; i++)
-                usedVertices.Add(false);
-
-            for (int i = 1; i <= multiGraph.nVertices; i++)
-            {
-                if (!usedVertices[i])
+                if (same_edge.Count > 0)
                 {
-                    currentCicle = new List<Edge>();
-                    dfs(i);
-                    if (currentCicle.Count < edges.Count)
-                        cicles.Add(new List<Edge>(currentCicle));
+                    colors[e.Id] = 2;
+                    colors[same_edge[0].Id] = 2;
                 }
             }
+            Graph optimalZ = z.Copy();
+            Graph optimalW = w.Copy();
 
-            return cicles;
+            bool repeat = true;
+            while (repeat)
+            {
+                ShuffleArray(z.edges);
+                repeat = false;
+                foreach (Edge e in z.edges)
+                {
+                    if (colors[e.Id] != 0 && !checked_edges[e.Id])
+                        continue;
+                    checked_edges[e.Id] = true;
+                    repeat = true;
+                    var c11 = z.findSubCicles();
+                    var c21 = z.findSubCicles();
+
+                    Chain_Edge_Fixing_Directed(z, w, e);
+
+                    var c1 = z.findSubCicles();
+                    var c2 = z.findSubCicles();
+                    if (c1.Count + c2.Count < c11.Count + c21.Count)
+                    {
+                        return true;
+                    }
+                }
+
+                for (int i = 0; i < colors.Count; i++)
+                    if (colors[i] != 2)
+                        colors[i] = 1;
+            }
+
+            return false;
         }
+
+        private void ShuffleArray(List<Edge> z)
+        {
+            for (int i = 0; i < z.Count; i++)
+            {
+                int j = r.Next(0, z.Count - 1);
+                Edge tmp = z[i];
+                z[i] = z[j];
+                z[j] = tmp;
+            }
+        }
+
+
+
+       
+       
 
         private void addVariables()
         {
             variables = new List<GRBVar>();
-
+            variables.Add(new GRBVar());
             foreach (var edge in multiGraph.edges)
             {
                 variables.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "e" + edge.Id));
@@ -181,9 +219,9 @@ namespace GraphDecomposer
                 {
                     GRBLinExpr expr = new GRBLinExpr();
 
-                    foreach (int id in multiGraph.edgesFrom[i])
+                    foreach (var edge in multiGraph.edgesFrom[i])
                     {
-                        expr.Add(1 * variables[id - 1]);
+                        expr.Add(1 * variables[edge.Id]);
                     }
 
                     model.AddConstr(expr == 2, $"V{i} constr");
@@ -192,18 +230,18 @@ namespace GraphDecomposer
                 {
                     GRBLinExpr expr1 = new GRBLinExpr();
 
-                    foreach (int id in multiGraph.edgesFrom[i])
+                    foreach (var edge in multiGraph.edgesFrom[i])
                     {
-                        expr1.Add(1 * variables[id - 1]);
+                        expr1.Add(1 * variables[edge.Id]);
                     }
 
                     model.AddConstr(expr1 == 1, $"V{i} 1_constr");
 
                     GRBLinExpr expr2 = new GRBLinExpr();
 
-                    foreach (int id in multiGraph.edgesTo[i])
+                    foreach (var edge in multiGraph.edgesTo[i])
                     {
-                        expr2.Add(1 * variables[id - 1]);
+                        expr2.Add(1 * variables[edge.Id]);
                     }
 
                     model.AddConstr(expr2 == 1, $"V{i} 2_constr");
@@ -232,7 +270,7 @@ namespace GraphDecomposer
             GRBLinExpr expr = new GRBLinExpr();
             foreach (var edge in E_s)
             {
-                int index = edge.Id - 1;
+                int index = edge.Id;
                 expr.AddTerm(1, variables[index]);
             }
 
@@ -245,7 +283,7 @@ namespace GraphDecomposer
             GRBLinExpr xExpr = new GRBLinExpr();
             foreach (var edge in multiGraph.xEdges)
             {
-                int index = edge.Id - 1;
+                int index = edge.Id;
                 xExpr.Add(1 * variables[index]);
             }
             model.AddConstr(xExpr <= multiGraph.xEdges.Count - 1, "X Edges constr");
@@ -256,7 +294,7 @@ namespace GraphDecomposer
             GRBLinExpr yExpr = new GRBLinExpr();
             foreach (var edge in multiGraph.yEdges)
             {
-                int index = edge.Id - 1;
+                int index = edge.Id;
                 yExpr.Add(1 * variables[index]);
             }
             model.AddConstr(yExpr <= multiGraph.yEdges.Count - 1, "X Edges constr");

@@ -103,18 +103,18 @@ namespace GraphDecomposer.Solvers
 
                 GRBLinExpr expr1 = new GRBLinExpr();
 
-                foreach (int id in multiGraph.edgesFrom[i])
+                foreach (var edge in multiGraph.edgesFrom[i])
                 {
-                    expr1.Add(1 * variables[id]);
+                    expr1.Add(1 * variables[edge.Id]);
                 }
 
                 model.AddConstr(expr1 == 1, $"V{i} 1_constr");
 
                 GRBLinExpr expr2 = new GRBLinExpr();
 
-                foreach (int id in multiGraph.edgesTo[i])
+                foreach (var edge in multiGraph.edgesTo[i])
                 {
-                    expr2.Add(1 * variables[id]);
+                    expr2.Add(1 * variables[edge.Id]);
                 }
 
                 model.AddConstr(expr2 == 1, $"V{i} 2_constr");
