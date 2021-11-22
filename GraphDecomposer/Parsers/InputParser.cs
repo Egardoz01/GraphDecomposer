@@ -11,7 +11,7 @@ namespace GraphDecomposer
 
         private List<TestInput> graphs;
 
-        public InputParser(string filePath, int nProblems)
+        public InputParser(string filePath, int nProblems, bool directed)
         {
             try
             {
@@ -22,9 +22,9 @@ namespace GraphDecomposer
                 for (int i = 0; i < nProblems; i++)
                 {
                     TestInput input = new TestInput();
-                    input.x = GraphParser.parce(lines[cur++]);
+                    input.x = GraphParser.parce(lines[cur++], directed);
 
-                    input.y = GraphParser.parce(lines[cur++]);
+                    input.y = GraphParser.parce(lines[cur++], directed);
                     cur++;
 
                     graphs.Add(input);

@@ -52,15 +52,18 @@ namespace GraphDecomposer
         public void Add(Edge e)
         {
             edges.Add(e);
-            nVertices++;
+            nEdges++;
             edgesFrom[e.from].Add(e);
+            edgesTo[e.to].Add(e);
         }
 
         public void Remove(Edge e)
         {
+
             edges.Remove(e);
-            nVertices--;
+            nEdges--;
             edgesFrom[e.from].Remove(e);
+            edgesTo[e.to].Remove(e);
         }
 
         public string FindCycle()

@@ -13,6 +13,13 @@ namespace GraphDecomposer
     {
         static void Main(string[] args)
         {
+            TestDFDOptimized();
+            TestDFD();
+        }
+
+
+        static void DoConfigurationTesting()
+        {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFD solverDFD = new SolverDFD();
             SolverMTZ solverMTZ = new SolverMTZ();
@@ -25,6 +32,15 @@ namespace GraphDecomposer
             }
         }
 
+        static void TestDFDOptimized()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+            foreach (var test in conf)
+            {
+                DoTest(solver, test);
+            }
+        }
 
         static void TestDFD()
         {
@@ -49,7 +65,7 @@ namespace GraphDecomposer
 
         static void DoTest(ISolver solver, TestConfiguration conf)
         {
-            InputParser input = new InputParser(conf.testFile, conf.nTests);
+            InputParser input = new InputParser(conf.testFile, conf.nTests, conf.directed);
 
             ResultAnalyses results = new ResultAnalyses(conf);
 

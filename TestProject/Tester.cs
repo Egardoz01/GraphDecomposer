@@ -13,7 +13,7 @@ namespace TestProject
 
        public  static void DoTest(ISolver solver, TestConfiguration conf)
         {
-            InputParser input = new InputParser(conf.testFile, conf.nTests);
+            InputParser input = new InputParser(conf.testFile, conf.nTests, conf.directed);
             int cntSolvable = 0, cntUnsolvable = 0;
             foreach (var p in input)
             {

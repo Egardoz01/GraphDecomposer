@@ -13,7 +13,7 @@ namespace TestProject
         public void UndirectedTests()
         {
             var conf = ConfigurationParser.GetConfiguration("testsConfiguration.json");
-            SolverNTZ_UnDirected solver = new SolverNTZ_UnDirected();
+            SolverMTZ_UnDirected solver = new SolverMTZ_UnDirected();
             foreach (var test in conf)
             {
                 if (!test.directed)

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GraphDecomposer.Solvers
 {
-    public class SolverNTZ_UnDirected : ISolver
+    public class SolverMTZ_UnDirected : ISolver
     {
         private GRBEnv env;
         private Multigraph multiGraph;
@@ -19,7 +19,7 @@ namespace GraphDecomposer.Solvers
         private List<GRBVar> alphaVars;
         private List<GRBVar> betaVars;
         int ciclesCnt = 0;
-        public SolverNTZ_UnDirected()
+        public SolverMTZ_UnDirected()
         {
             env = new GRBEnv(true);
             env.Set("LogFile", "mip1.log");
@@ -75,26 +75,26 @@ namespace GraphDecomposer.Solvers
             for (int i = 1; i < w_1.Count; i++)
             {
                 if (w_1[i].X == 1)
-                    w.edges.Add(new Edge(i, multiGraph.edges[i-1].from, multiGraph.edges[i-1].to));
+                    w.edges.Add(new Edge(i, multiGraph.edges[i-1].from, multiGraph.edges[i-1].to, this.conf.directed));
             }
 
             for (int i = 1; i < w_2.Count; i++)
             {
                 if (w_2[i].X == 1)
-                    w.edges.Add(new Edge(i,multiGraph.edges[i-1].to, multiGraph.edges[i-1].from));
+                    w.edges.Add(new Edge(i,multiGraph.edges[i-1].to, multiGraph.edges[i-1].from, this.conf.directed));
             }
 
 
             for (int i = 1; i < z_1.Count; i++)
             {
                 if (z_1[i].X == 1)
-                    z.edges.Add(new Edge(i, multiGraph.edges[i-1].from, multiGraph.edges[i-1].to));
+                    z.edges.Add(new Edge(i, multiGraph.edges[i-1].from, multiGraph.edges[i-1].to, this.conf.directed));
             }
 
             for (int i = 1; i < z_2.Count; i++)
             {
                 if (z_2[i].X == 1)
-                    z.edges.Add(new Edge(i, multiGraph.edges[i-1].to, multiGraph.edges[i-1].from));
+                    z.edges.Add(new Edge(i, multiGraph.edges[i-1].to, multiGraph.edges[i-1].from, this.conf.directed));
             }
 
             List<int> be = new List<int>();

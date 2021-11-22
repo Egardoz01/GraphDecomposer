@@ -8,11 +8,11 @@ namespace GraphDecomposer.Solvers
     public class SolverMTZ : ISolver
     {
         public SolverMTZ_Directed directedSolver;
-        public SolverNTZ_UnDirected undirectedSolver;
+        public SolverMTZ_UnDirected undirectedSolver;
         public SolverMTZ()
         {
             directedSolver = new SolverMTZ_Directed();
-            undirectedSolver = new SolverNTZ_UnDirected();
+            undirectedSolver = new SolverMTZ_UnDirected();
         }
         public SolverResult SolveTest(TestInput input, TestConfiguration conf)
         {
