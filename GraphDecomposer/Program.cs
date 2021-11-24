@@ -13,8 +13,7 @@ namespace GraphDecomposer
     {
         static void Main(string[] args)
         {
-            TestDFDOptimized();
-            TestDFD();
+            DoConfigurationTesting();
         }
 
 
@@ -22,11 +21,14 @@ namespace GraphDecomposer
         {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFD solverDFD = new SolverDFD();
+            SolverDFDOptimized solverDFD_LSP = new SolverDFDOptimized();
             SolverMTZ solverMTZ = new SolverMTZ();
             foreach (var test in conf)
             {
                 if (test.model == "dfd")
                     DoTest(solverDFD, test);
+                else if(test.model == "dfd+ls")
+                    DoTest(solverDFD_LSP, test);
                 else
                     DoTest(solverMTZ, test);
             }

@@ -49,24 +49,43 @@ namespace GraphDecomposer
 
             return g;
         }
-        public void Add(Edge e)
+        public void Add(Edge e, bool addToEdgesArray = true)
         {
-            edges.Add(e);
+            if (addToEdgesArray)
+                edges.Add(e);
+
             nEdges++;
             edgesFrom[e.from].Add(e);
             edgesTo[e.to].Add(e);
         }
 
-        public void Remove(Edge e)
+        public void RestoreEdges()
         {
+            edges = new List<Edge>();
+            foreach (var edgesFromVertex in edgesFrom)
+            {
+                foreach (var edge in edgesFromVertex)
+                    edges.Add(edge);
+            }
 
-            edges.Remove(e);
+        }
+
+        public void Remove(Edge e, bool addToEdgesArray=true)
+        {
+            if(addToEdgesArray)
+                edges.Remove(e);
+
             nEdges--;
             edgesFrom[e.from].Remove(e);
             edgesTo[e.to].Remove(e);
         }
 
         public string FindCycle()
+        {
+            return this.directed ? FindCycleDirected() : FindCycleUnDirected();
+        }
+
+        public string FindCycleDirected()
         {
             List<List<int>> cicles = new List<List<int>>();
             List<bool> used = new List<bool>();
@@ -86,6 +105,56 @@ namespace GraphDecomposer
                         used[next] = true;
                         cur.Add(next);
                         cnt++;
+                    }
+                    cicles.Add(cur);
+                }
+            }
+
+            return String.Join(' ', cicles[0].ToArray());
+        }
+
+
+
+        public string FindCycleUnDirected()
+        {
+            List<List<int>> cicles = new List<List<int>>();
+            List<bool> used = new List<bool>();
+            for (int i = 0; i <= nVertices; i++)
+                used.Add(false);
+            for (int i = 1; i <= nVertices; i++)
+            {
+                List<int> cur = new List<int>();
+                if (!used[i])
+                {
+                    cur.Add(i);
+                    used[i] = true;
+                    int cnt = 1;
+                    while (cnt < nVertices)
+                    {
+                        int x = cur[cnt - 1];
+                        foreach (var ed in edgesFrom[x])
+                        {
+                           
+                            int next = ed.to;
+                            if (!used[next])
+                            {
+                                used[next] = true;
+                                cur.Add(next);
+                                cnt++;
+                            }
+                        }
+
+                        foreach (var ed in edgesTo[x])
+                        {
+
+                            int next = ed.from;
+                            if (!used[next])
+                            {
+                                used[next] = true;
+                                cur.Add(next);
+                                cnt++;
+                            }
+                        }
                     }
                     cicles.Add(cur);
                 }
@@ -118,11 +187,17 @@ namespace GraphDecomposer
                 {
                     currentCicle = new List<Edge>();
                     dfs(i);
-                    if (currentCicle.Count < edges.Count)
+                    if (currentCicle.Count < edges.Count && currentCicle.Count > 0)
+                    {
+                        var last = currentCicle[currentCicle.Count - 1];
+                        if (last.to != i && last.from != i)
+                        {
+                            throw new Exception("Bruh");
+                        }
                         cicles.Add(new List<Edge>(currentCicle));
+                    }
                 }
             }
-
             return cicles;
         }
 

@@ -10,15 +10,18 @@ namespace GraphDecomposer
         public int from;
         public int to;
         public bool directed;
+        private int _hashCode;
         public Edge(int id, int from, int to, bool directed)
         {
             this.Id = id;
             this.from = from;
             this.to = to;
             this.directed = directed;
+            _hashCode = CountHashCode(from, to, directed);
         }
 
-        public override int GetHashCode()
+
+        private static int CountHashCode(int from, int to, bool directed)
         {
             int v1 = from, v2 = to;
 
@@ -33,7 +36,11 @@ namespace GraphDecomposer
             }
 
             return (v1 + " " + v2).GetHashCode();
+        }
 
+        public override int GetHashCode()
+        {
+            return _hashCode;
         }
 
         public override bool Equals(object obj)

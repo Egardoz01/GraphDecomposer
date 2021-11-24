@@ -1,31 +1,63 @@
 {
   "tests": [
-    {
-      "model": "dfd",
+   /* {
+      "model": "dfd+ls",
       "directed": true,
-      "nVertices": 32,
-      "nTests": 100,
-      "testFile": "InputData\\test32.txt",
-      "solvable": 100,
-      "unsolvable": 0
+      "nVertices": 10,
+      "nTests": 5,
+      "testFile": "InputData\\test10p.txt"
     },
     {
-      "model": "dfd",
+      "model": "dfd+ls",
       "directed": true,
       "nVertices": 64,
       "nTests": 100,
-      "testFile": "InputData\\test64.txt",
-      "solvable": 100,
-      "unsolvable": 0
+      "testFile": "InputData\\test64.txt"
+    },*/
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 192,
+      "nTests": 100,
+      "testFile": "InputData\\test192.txt"
     },
     {
       "model": "dfd",
-      "directed": true,
-      "nVertices": 64,
-      "nTests": 10,
-      "testFile": "InputData\\test64p.txt",
-      "solvable": 0,
-      "unsolvable": 10
+      "directed": false,
+      "nVertices": 192,
+      "nTests": 100,
+      "testFile": "InputData\\test192.txt"
     }
+    /*
+    {
+      "model": "dfd+ls",
+      "directed": true,
+      "nVertices": 256,
+      "nTests": 100,
+      "testFile": "InputData\\test256.txt"
+    },
+    {
+      "model": "dfd",
+      "directed": true,
+      "nVertices": 64,
+      "nTests": 100,
+      "testFile": "InputData\\test64.txt"
+    },
+    {
+      "model": "dfd",
+      "directed": true,
+      "nVertices": 192,
+      "nTests": 100,
+      "testFile": "InputData\\test192.txt"
+    },
+    {
+      "model": "dfd",
+      "directed": true,
+      "nVertices": 256,
+      "nTests": 100,
+      "testFile": "InputData\\test256.txt"
+    }*/
+
+
   ]
 }
