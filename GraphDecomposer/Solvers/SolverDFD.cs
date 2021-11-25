@@ -65,9 +65,9 @@ namespace GraphDecomposer
                 model.Optimize();
 
                 bool hasSol = model.SolCount > 0;
-
                 if (!hasSol)
-                    return new SolverResult(iterationsCnt, false);// no solution
+                    return new SolverResult(iterationsCnt, false, null, null);// no solution
+
 
                 List<Edge> z_Edges = new List<Edge>();
                 List<Edge> w_Edges = new List<Edge>();
@@ -84,24 +84,20 @@ namespace GraphDecomposer
                 Graph z = new Graph(multiGraph.nVertices, z_Edges, conf.directed);
                 Graph w = new Graph(multiGraph.nVertices, w_Edges, conf.directed);
 
-                bool repeat = true;
+          
 
 
-                // while (repeat)
-                // {
+
                 var zSubCicles = z.findSubCicles();
                 var wSubCicles = w.findSubCicles();
                 if (zSubCicles.Count == 0 && wSubCicles.Count == 0)
-                    return new SolverResult(iterationsCnt, true);// yes solution
+                    return new SolverResult(iterationsCnt, true,z,w);// yes solution
 
                 foreach (var cicle in zSubCicles)
                     addCicleConstr(cicle);
                 foreach (var cicle in wSubCicles)
                     addCicleConstr(cicle);
 
-                //  if (conf.directed)
-                //  repeat = LocalSearchDirected(z, w);
-                // }
 
             }
         }

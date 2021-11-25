@@ -24,9 +24,9 @@ namespace GraphDecomposer.Solvers
                 model.Optimize();
 
                 bool hasSol = model.SolCount > 0;
-
                 if (!hasSol)
-                    return new SolverResult(iterationsCnt, false);// no solution
+                    return new SolverResult(iterationsCnt, false, null, null);// no solution
+
 
                 List<Edge> z_Edges = new List<Edge>();
                 List<Edge> w_Edges = new List<Edge>();
@@ -42,8 +42,11 @@ namespace GraphDecomposer.Solvers
 
                 Graph z = new Graph(multiGraph.nVertices, z_Edges, conf.directed);
                 Graph w = new Graph(multiGraph.nVertices, w_Edges, conf.directed);
-                z.GraphId = 1;
-                w.GraphId = 2;
+
+
+
+
+
                 bool repeat = true;
 
                 int cntRepeat = 0;
@@ -61,18 +64,13 @@ namespace GraphDecomposer.Solvers
 
                     if (zSubCicles.Count == 0 && wSubCicles.Count == 0)
                     {
-                        var s1 = z.FindCycle();
-                        var s2 = w.FindCycle();
+                       // bool b = checkOriginalCicles(z, w);
 
-                        var s3 = testInput.y.FindCycle();
-                        var s4 = testInput.x.FindCycle();
-
-                        if (s1 != s3 && s2 != s3 && s1 != s4 && s2 != s4)
-                            return new SolverResult(iterationsCnt, true);// yes solution
-                        else
-                            break;
+                        return new SolverResult(iterationsCnt, true, z, w);// yes solution
                     }
 
+                    z.GraphId = 1;
+                    w.GraphId = 2;
                     if (conf.directed)
                         repeat = LocalSearchDirected(ref z, ref w);
                     else
@@ -108,19 +106,8 @@ namespace GraphDecomposer.Solvers
                 if (!brokenVerticses.Contains(e.to))
                     brokenVerticses.Add(e.to);
             }
-
             else
                 brokenVerticses.Remove(e.to);
-
-            if (brokenVerticses.Count == 2)
-            {
-                if (brokenVerticses[0] == brokenVerticses[1])
-                {
-                    int a = 0;
-                }
-            }
-
-
         }
 
         private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e)
@@ -190,6 +177,37 @@ namespace GraphDecomposer.Solvers
             }
         }
 
+        bool ArrayEquals(int[] a, int[] b)
+        {
+            for (int i = 0; i <a.Length; i++)
+            {
+                if (a[i] != b[i])
+                    return false;
+            }
+            return true;
+        }
+
+        bool checkOriginalCicles(Graph z, Graph w)
+        {
+            var s1 = z.FindCycle();
+            var s2 = w.FindCycle();
+            var s3 = testInput.y.FindCycle();
+            var s4 = testInput.x.FindCycle();
+
+
+
+            if (!ArrayEquals(s1, s3) && !!ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4)) 
+            {
+                Array.Reverse(s3, 1, s3.Length - 1);
+                Array.Reverse(s4, 1, s4.Length - 1);
+
+                // z.checkCicle(s1);
+                // w.checkCicle(s2);
+                if (!ArrayEquals(s1, s3) && !!ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4))
+                    return true;
+            }
+            return false;
+        }
 
         private T GetRandomElement<T>(List<T> list)
         {
@@ -252,6 +270,12 @@ namespace GraphDecomposer.Solvers
 
                     while (brokenVerticses.Count != 0)
                     {
+
+                        if (brokenVerticses.Count == 1)
+                        {
+                            throw new Exception("Bruh");
+                        }
+
                         var vertex = GetRandomElement(brokenVerticses);
 
                         if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count <= 1)
@@ -259,10 +283,10 @@ namespace GraphDecomposer.Solvers
                             var edges = new List<Edge>();
 
                             foreach (var edge in w.edgesFrom[vertex])
-                              //  if (fixed_edges[edge.Id] == 0)
+                                if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
                             foreach (var edge in w.edgesTo[vertex])
-                              //  if (fixed_edges[edge.Id] == 0)
+                                if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
 
                             if (edges.Count != 0)
@@ -273,7 +297,7 @@ namespace GraphDecomposer.Solvers
                             }
                             else
                             {
-                                throw new Exception("Bruh no edges to move");
+                                break;
                             }
                         }
 
@@ -282,10 +306,10 @@ namespace GraphDecomposer.Solvers
                             var edges = new List<Edge>();
 
                             foreach (var edge in z.edgesFrom[vertex])
-                              //  if (fixed_edges[edge.Id] == 0)
+                                if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
                             foreach (var edge in z.edgesTo[vertex])
-                              //  if (fixed_edges[edge.Id] == 0)
+                                if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
 
                             if (edges.Count != 0)
@@ -296,23 +320,27 @@ namespace GraphDecomposer.Solvers
                             }
                             else
                             {
-                                throw new Exception("Bruh no edges to move");
+                                break;
                             }
                         }
 
                     }
 
-                    var a = z.findSubCicles();
-                    var b = w.findSubCicles();
-                    if (a.Count + b.Count < before)
+                    if (brokenVerticses.Count == 0)
                     {
-                        z.RestoreEdges();
-                        w.RestoreEdges();
-                        return true;
+                        var a = z.findSubCicles();
+                        var b = w.findSubCicles();
+                        if (a.Count + b.Count < before)
+                        {
+                            if (a.Count + b.Count != 0 || checkOriginalCicles(z, w))
+                            {
+                                z.RestoreEdges();
+                                w.RestoreEdges();
+                                return true;
+                            }
+
+                        }
                     }
-
-
-
 
                     w = optimalW.Copy();
                     z = optimalZ.Copy();

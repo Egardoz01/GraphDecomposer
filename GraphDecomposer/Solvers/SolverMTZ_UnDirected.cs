@@ -110,8 +110,8 @@ namespace GraphDecomposer.Solvers
             }
 
             var res = new string[2];
-            res[0] = w.FindCycle();
-            res[1] = z.FindCycle();
+          //  res[0] = w.FindCycle();
+           // res[1] = z.FindCycle();
 
             return res;
         }

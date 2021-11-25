@@ -23,5 +23,18 @@ namespace TestProject
 
         }
 
+        [Fact]
+        public static void UnDirectedTest()
+        {
+            var conf = ConfigurationParser.GetConfiguration("testsConfiguration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+            foreach (var test in conf)
+            {
+                if (!test.directed)
+                    Tester.DoTest(solver, test);
+            }
+
+        }
+
     }
 }

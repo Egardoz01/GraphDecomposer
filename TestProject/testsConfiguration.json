@@ -1,6 +1,6 @@
 {
   "tests": [
-    {
+   /* {
       "model": "dfd",
       "directed": true,
       "nVertices": 32,
@@ -8,8 +8,7 @@
       "testFile": "InputData\\test32.txt",
       "solvable": 30,
       "unsolvable": 70
-    }
-    ,
+    },
     {
       "model": "dfd",
       "directed": true,
@@ -45,7 +44,7 @@
       "testFile": "InputData\\test64.txt",
       "solvable": 100,
       "unsolvable": 0
-    },
+    },*/
     {
       "model": "dfd",
       "directed": false,
