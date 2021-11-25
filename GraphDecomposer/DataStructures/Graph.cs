@@ -13,6 +13,7 @@ namespace GraphDecomposer
         public List<List<Edge>> edgesFrom;
         public List<List<Edge>> edgesTo;
         public bool directed;
+        public int GraphId;
         public Graph()
         {
             
@@ -46,7 +47,7 @@ namespace GraphDecomposer
         public Graph Copy()
         {
             Graph g = new Graph(nVertices, edges, directed);
-
+            g.GraphId = this.GraphId;
             return g;
         }
         public void Add(Edge e, bool addToEdgesArray = true)

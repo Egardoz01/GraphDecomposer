@@ -42,7 +42,8 @@ namespace GraphDecomposer.Solvers
 
                 Graph z = new Graph(multiGraph.nVertices, z_Edges, conf.directed);
                 Graph w = new Graph(multiGraph.nVertices, w_Edges, conf.directed);
-
+                z.GraphId = 1;
+                w.GraphId = 2;
                 bool repeat = true;
 
                 int cntRepeat = 0;
@@ -75,7 +76,7 @@ namespace GraphDecomposer.Solvers
                     if (conf.directed)
                         repeat = LocalSearchDirected(ref z, ref w);
                     else
-                        repeat = LocalSearchUnDirected(ref z, ref w, 20);
+                        repeat = LocalSearchUnDirected(ref z, ref w, 5);
                 }
 
                 int a = cntRepeat;
@@ -92,6 +93,34 @@ namespace GraphDecomposer.Solvers
         {
             z.Remove(e, false);
             w.Add(e, false);
+
+            Graph g = z.GraphId == 1 ? z : w;
+            if (g.edgesFrom[e.from].Count + g.edgesTo[e.from].Count != 2)
+            {
+                if (!brokenVerticses.Contains(e.from))
+                    brokenVerticses.Add(e.from);
+            }
+            else
+                brokenVerticses.Remove(e.from);
+
+            if (g.edgesFrom[e.to].Count + g.edgesTo[e.to].Count != 2)
+            {
+                if (!brokenVerticses.Contains(e.to))
+                    brokenVerticses.Add(e.to);
+            }
+
+            else
+                brokenVerticses.Remove(e.to);
+
+            if (brokenVerticses.Count == 2)
+            {
+                if (brokenVerticses[0] == brokenVerticses[1])
+                {
+                    int a = 0;
+                }
+            }
+
+
         }
 
         private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e)
@@ -169,9 +198,11 @@ namespace GraphDecomposer.Solvers
             return list[ind];
         }
 
+        List<int> brokenVerticses;
         private bool LocalSearchUnDirected(ref Graph z, ref Graph w, int attemptLimit)
         {
             fixed_edges = new List<int>();
+
             for (int i = 0; i <= multiGraph.nEdges; i++)
             {
                 fixed_edges.Add(0);
@@ -212,37 +243,26 @@ namespace GraphDecomposer.Solvers
                 var e = edgesToTry[i];
 
                 cntEdgesTested++;
-
-                while (attemptLimit-- > 0)
+                int attempts = attemptLimit;
+                brokenVerticses = new List<int>();
+                while (attempts-- > 0)
                 {
                     MoveEdge(z, w, e);
                     Chain_Edge_Fixing_UnDirected(z, w, e);
 
-                    while (true)
+                    while (brokenVerticses.Count != 0)
                     {
-                        List<int> verticses = new List<int>();
-                        for (int vertexI = 1; vertexI <= z.nVertices; vertexI++)
-                        {
-                            if (z.edgesFrom[vertexI].Count + z.edgesTo[vertexI].Count != 2)
-                            {
-                                verticses.Add(vertexI);
-                            }
-                        }
-                        if (verticses.Count == 0)
-                            break;
+                        var vertex = GetRandomElement(brokenVerticses);
 
-
-                        var vertex = GetRandomElement(verticses);
-
-                        if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count == 1)
+                        if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count <= 1)
                         {
                             var edges = new List<Edge>();
 
                             foreach (var edge in w.edgesFrom[vertex])
-                                if (fixed_edges[edge.Id] == 0)
+                              //  if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
                             foreach (var edge in w.edgesTo[vertex])
-                                if (fixed_edges[edge.Id] == 0)
+                              //  if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
 
                             if (edges.Count != 0)
@@ -251,17 +271,21 @@ namespace GraphDecomposer.Solvers
                                 MoveEdge(w, z, ed);
                                 Chain_Edge_Fixing_UnDirected(w, z, ed);
                             }
+                            else
+                            {
+                                throw new Exception("Bruh no edges to move");
+                            }
                         }
 
-                        if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count == 3)
+                        if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count >= 3)
                         {
                             var edges = new List<Edge>();
 
                             foreach (var edge in z.edgesFrom[vertex])
-                                if (fixed_edges[edge.Id] == 0)
+                              //  if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
                             foreach (var edge in z.edgesTo[vertex])
-                                if (fixed_edges[edge.Id] == 0)
+                              //  if (fixed_edges[edge.Id] == 0)
                                     edges.Add(edge);
 
                             if (edges.Count != 0)
@@ -269,6 +293,10 @@ namespace GraphDecomposer.Solvers
                                 var ed = GetRandomElement(edges);
                                 MoveEdge(z, w, ed);
                                 Chain_Edge_Fixing_UnDirected(z, w, ed);
+                            }
+                            else
+                            {
+                                throw new Exception("Bruh no edges to move");
                             }
                         }
 

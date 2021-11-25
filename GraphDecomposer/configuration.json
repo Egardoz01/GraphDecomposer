@@ -1,6 +1,6 @@
 {
   "tests": [
-   /* {
+    /*{
       "model": "dfd+ls",
       "directed": true,
       "nVertices": 10,
@@ -20,16 +20,9 @@
       "nVertices": 192,
       "nTests": 100,
       "testFile": "InputData\\test192.txt"
-    },
-    {
-      "model": "dfd",
-      "directed": false,
-      "nVertices": 192,
-      "nTests": 100,
-      "testFile": "InputData\\test192.txt"
     }
-    /*
-    {
+
+    /* {
       "model": "dfd+ls",
       "directed": true,
       "nVertices": 256,
