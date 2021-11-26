@@ -174,7 +174,7 @@ namespace GraphDecomposer.Solvers
 
         bool ArrayEquals(int[] a, int[] b)
         {
-            for (int i = 0; i <a.Length; i++)
+            for (int i = 0; i < a.Length; i++)
             {
                 if (a[i] != b[i])
                     return false;
@@ -189,7 +189,7 @@ namespace GraphDecomposer.Solvers
             var s3 = testInput.y.FindCycle();
             var s4 = testInput.x.FindCycle();
 
-            if (!ArrayEquals(s1, s3) && !ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4)) 
+            if (!ArrayEquals(s1, s3) && !ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4))
             {
                 Array.Reverse(s3, 1, s3.Length - 1);
                 Array.Reverse(s4, 1, s4.Length - 1);
@@ -273,12 +273,28 @@ namespace GraphDecomposer.Solvers
                         {
                             var edges = new List<Edge>();
 
-                            foreach (var edge in w.edgesFrom[vertex])
-                                if (fixed_edges[edge.Id] == 0)
-                                    edges.Add(edge);
-                            foreach (var edge in w.edgesTo[vertex])
-                                if (fixed_edges[edge.Id] == 0)
-                                    edges.Add(edge);
+                            foreach (var x in brokenVerticses)
+                            {
+                                if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count <= 1)
+                                {
+                                    foreach (var edge in w.edgesFrom[vertex])
+                                        if (fixed_edges[edge.Id] == 0 && edge.to == x)
+                                            edges.Add(edge);
+                                    foreach (var edge in w.edgesTo[vertex])
+                                        if (fixed_edges[edge.Id] == 0 && edge.from == x)
+                                            edges.Add(edge);
+                                }
+                            }
+
+                            if (edges.Count == 0)
+                            {
+                                foreach (var edge in w.edgesFrom[vertex])
+                                    if (fixed_edges[edge.Id] == 0)
+                                        edges.Add(edge);
+                                foreach (var edge in w.edgesTo[vertex])
+                                    if (fixed_edges[edge.Id] == 0)
+                                        edges.Add(edge);
+                            }
 
                             if (edges.Count != 0)
                             {
@@ -288,7 +304,7 @@ namespace GraphDecomposer.Solvers
                             }
                             else
                             {
-                               break;
+                                break;
                             }
                         }
 
@@ -296,12 +312,29 @@ namespace GraphDecomposer.Solvers
                         {
                             var edges = new List<Edge>();
 
-                            foreach (var edge in z.edgesFrom[vertex])
-                                if (fixed_edges[edge.Id] == 0)
-                                    edges.Add(edge);
-                            foreach (var edge in z.edgesTo[vertex])
-                                if (fixed_edges[edge.Id] == 0)
-                                    edges.Add(edge);
+                            foreach (var x in brokenVerticses)
+                            {
+                                if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count >= 3)
+                                {
+                                    foreach (var edge in z.edgesFrom[vertex])
+                                        if (fixed_edges[edge.Id] == 0 && edge.to == x)
+                                            edges.Add(edge);
+                                    foreach (var edge in z.edgesTo[vertex])
+                                        if (fixed_edges[edge.Id] == 0 && edge.from == x)
+                                            edges.Add(edge);
+                                }
+                            }
+
+
+                            if (edges.Count == 0)
+                            {
+                                foreach (var edge in z.edgesFrom[vertex])
+                                    if (fixed_edges[edge.Id] == 0)
+                                        edges.Add(edge);
+                                foreach (var edge in z.edgesTo[vertex])
+                                    if (fixed_edges[edge.Id] == 0)
+                                        edges.Add(edge);
+                            }
 
                             if (edges.Count != 0)
                             {
