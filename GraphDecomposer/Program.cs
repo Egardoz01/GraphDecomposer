@@ -6,6 +6,7 @@ using Gurobi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace GraphDecomposer
 {
@@ -27,7 +28,7 @@ namespace GraphDecomposer
             {
                 if (test.model == "dfd")
                     DoTest(solverDFD, test);
-                else if(test.model == "dfd+ls")
+                else if (test.model == "dfd+ls")
                     DoTest(solverDFD_LS, test);
                 else
                     DoTest(solverMTZ, test);
@@ -75,15 +76,32 @@ namespace GraphDecomposer
             foreach (var p in input)
             {
                 Console.WriteLine("#running test " + cnt++);
+
                 Stopwatch timeTracker = new Stopwatch();
                 timeTracker.Start();
-      
+
                 var res = solver.SolveTest(p, conf);
                 timeTracker.Stop();
 
                 res.millisecondsElapsed = timeTracker.ElapsedMilliseconds;
 
+                res.InitialZ = p.x;
+                res.InitialW = p.y;
                 results.addResult(res);
+
+                /*  if (res.solutionExistance)
+                  {
+                      Console.WriteLine("                     Initial Cicle 1:" + String.Join(',', p.x.FindCycle()));
+                      Console.WriteLine("                     Initial Cicle 2:" + String.Join(',', p.y.FindCycle()));
+
+                      Console.WriteLine("                     Result Cicle 1:" + String.Join(',', res.z.FindCycle()));
+                      Console.WriteLine("                     Result Cicle 2:" + String.Join(',', res.w.FindCycle()));
+                  }
+                  else
+                  {
+                      Console.WriteLine("No solution");
+                  }
+                */
             }
 
             results.printResults();

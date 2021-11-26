@@ -43,10 +43,6 @@ namespace GraphDecomposer.Solvers
                 Graph z = new Graph(multiGraph.nVertices, z_Edges, conf.directed);
                 Graph w = new Graph(multiGraph.nVertices, w_Edges, conf.directed);
 
-
-
-
-
                 bool repeat = true;
 
                 int cntRepeat = 0;
@@ -64,7 +60,6 @@ namespace GraphDecomposer.Solvers
 
                     if (zSubCicles.Count == 0 && wSubCicles.Count == 0)
                     {
-                       // bool b = checkOriginalCicles(z, w);
 
                         return new SolverResult(iterationsCnt, true, z, w);// yes solution
                     }
@@ -194,16 +189,12 @@ namespace GraphDecomposer.Solvers
             var s3 = testInput.y.FindCycle();
             var s4 = testInput.x.FindCycle();
 
-
-
-            if (!ArrayEquals(s1, s3) && !!ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4)) 
+            if (!ArrayEquals(s1, s3) && !ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4)) 
             {
                 Array.Reverse(s3, 1, s3.Length - 1);
                 Array.Reverse(s4, 1, s4.Length - 1);
 
-                // z.checkCicle(s1);
-                // w.checkCicle(s2);
-                if (!ArrayEquals(s1, s3) && !!ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4))
+                if (!ArrayEquals(s1, s3) && !ArrayEquals(s1, s4) && !ArrayEquals(s2, s3) && !ArrayEquals(s2, s4))
                     return true;
             }
             return false;
@@ -297,7 +288,7 @@ namespace GraphDecomposer.Solvers
                             }
                             else
                             {
-                                break;
+                               break;
                             }
                         }
 

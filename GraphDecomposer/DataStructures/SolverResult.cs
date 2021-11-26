@@ -9,7 +9,8 @@ namespace GraphDecomposer.DataStructures
         public int iterationsCnt;
         public bool solutionExistance;
         public long millisecondsElapsed;
-        Graph z, w;
+        public Graph z, w;
+        public Graph InitialZ, InitialW; 
         public SolverResult(int iterCnt, bool solution, Graph z, Graph w)
         {
             iterationsCnt = iterCnt;
@@ -17,6 +18,8 @@ namespace GraphDecomposer.DataStructures
             millisecondsElapsed = 0;
             this.z = z;
             this.w = w;
+            InitialW = null;
+            InitialZ = null;
         }
     }
 }

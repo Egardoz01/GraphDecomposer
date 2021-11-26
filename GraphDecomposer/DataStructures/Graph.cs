@@ -54,7 +54,7 @@ namespace GraphDecomposer
         {
             if (addToEdgesArray)
             {
-                if (edges.FindAll(x=>x.Id==e.Id).Count>0)
+                if (edges.FindAll(x => x.Id == e.Id).Count > 0)
                 {
 
                     throw new Exception("Bruh");
@@ -105,7 +105,7 @@ namespace GraphDecomposer
                 return false;
 
             verts.Add(verts[0]);
-            for (int i = 1; i <=nVertices; i++)
+            for (int i = 1; i <= nVertices; i++)
             {
                 int u = verts[i];
                 int v = verts[i - 1];
@@ -257,6 +257,7 @@ namespace GraphDecomposer
                     usedEdges[edge.Id] = true;
                     currentCicle.Add(edge);
                     dfs(y);
+                    break;
                 }
             }
 
@@ -272,11 +273,10 @@ namespace GraphDecomposer
                         usedEdges[edge.Id] = true;
                         currentCicle.Add(edge);
                         dfs(y);
+                        break;
                     }
                 }
-
             }
-
         }
     }
 }
