@@ -24,7 +24,7 @@ namespace GraphDecomposer.LocalSearch
                     edgesToTry.Add(z.edges[i]);
             }
 
-            ArrayUtils.ShuffleArray(edgesToTry);
+            ArrayUtils.Shuffle(edgesToTry);
             for (int i = edgesToTry.Count - 1; i >= 0; i--)
             {
                 var e = edgesToTry[i];
@@ -42,7 +42,8 @@ namespace GraphDecomposer.LocalSearch
                 }
             }
 
-            return false;
+            return LocalSearchUnDirectedSecondNeighborhood();
+            // return false;
         }
 
 
@@ -72,6 +73,22 @@ namespace GraphDecomposer.LocalSearch
                             foreach (var edge in w.edgesTo[vertex])
                                 if (fixed_edges[edge.Id] == 0 && edge.from == x)
                                     edges.Add(edge);
+                        }
+                    }
+
+                    if (edges.Count == 0)
+                    {
+                        foreach (var x in brokenVerticses)
+                        {
+                            if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count >= 3)
+                            {
+                                foreach (var edge in w.edgesFrom[vertex])
+                                    if (fixed_edges[edge.Id] == 0 && edge.to == x)
+                                        edges.Add(edge);
+                                foreach (var edge in w.edgesTo[vertex])
+                                    if (fixed_edges[edge.Id] == 0 && edge.from == x)
+                                        edges.Add(edge);
+                            }
                         }
                     }
 
@@ -111,6 +128,23 @@ namespace GraphDecomposer.LocalSearch
                             foreach (var edge in z.edgesTo[vertex])
                                 if (fixed_edges[edge.Id] == 0 && edge.from == x)
                                     edges.Add(edge);
+                        }
+                    }
+
+
+                    if (edges.Count == 0)
+                    {
+                        foreach (var x in brokenVerticses)
+                        {
+                            if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count <= 1)
+                            {
+                                foreach (var edge in z.edgesFrom[vertex])
+                                    if (fixed_edges[edge.Id] == 0 && edge.to == x)
+                                        edges.Add(edge);
+                                foreach (var edge in z.edgesTo[vertex])
+                                    if (fixed_edges[edge.Id] == 0 && edge.from == x)
+                                        edges.Add(edge);
+                            }
                         }
                     }
 
@@ -170,13 +204,11 @@ namespace GraphDecomposer.LocalSearch
             return false;
         }
 
-        private bool checkOriginalCicles()
-        {
-            return !(z.CheckEqualCicle(OriginalW) || z.CheckEqualCicle(OriginalZ) || w.CheckEqualCicle(OriginalZ) || w.CheckEqualCicle(OriginalW));
-        }
+
 
         private void MoveEdge(Graph z, Graph w, Edge e)
         {
+            fixed_edges[e.Id] = 1;
             z.Remove(e, false);
             w.Add(e, false);
 
@@ -200,7 +232,7 @@ namespace GraphDecomposer.LocalSearch
 
         private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e)
         {
-            fixed_edges[e.Id] = 1;
+     
 
             int i = e.from;
             int j = e.to;
@@ -268,10 +300,11 @@ namespace GraphDecomposer.LocalSearch
 
 
 
-        private bool LocalSearchUnDirectedSecondOkrestnost(ref Graph z, ref Graph w, int attemptLimit)
+        private bool LocalSearchUnDirectedSecondNeighborhood()
         {
 
             List<Edge> edgesToTryZ = new List<Edge>();
+            List<Edge> edgesToTryW = new List<Edge>();
             for (int i = 0; i < z.edges.Count; i++)
             {
                 var e = z.edges[i];
@@ -279,26 +312,37 @@ namespace GraphDecomposer.LocalSearch
                     edgesToTryZ.Add(z.edges[i]);
             }
 
-            var c11 = z.findSubCicles();
-            var c21 = w.findSubCicles();
-            int before = c11.Count + c21.Count;
-
-            ArrayUtils.ShuffleArray(edgesToTryZ);
-            for (int i = edgesToTryZ.Count - 1; i >= 0; i--)
+            for (int i = 0; i < w.edges.Count; i++)
             {
-                var e = edgesToTryZ[i];
-                int attempts = attemptLimit;
-                brokenVerticses = new List<int>();
-                while (attempts-- > 0)
+                var e = w.edges[i];
+                if (fixed_edges[e.Id] == 0)
+                    edgesToTryW.Add(w.edges[i]);
+            }
+
+            ArrayUtils.Shuffle(edgesToTryZ);
+            for (int i = 0; i < edgesToTryZ.Count; i++)
+            {
+                for (int j = 0; j < edgesToTryW.Count; j++)
                 {
-                    MoveEdge(z, w, e);
-                    Chain_Edge_Fixing_UnDirected(z, w, e);
+                    var e1 = edgesToTryZ[i];
+                    var e2 = edgesToTryW[j];
 
-                    bool res = TryToFix();
+                    int attempts = attemptLimit;
+                    brokenVerticses = new List<int>();
+                    while (attempts-- > 0)
+                    {
+                        MoveEdge(z, w, e1);
+                        MoveEdge(w, z, e2);
 
-                    if (res)
-                        return true;
+                        Chain_Edge_Fixing_UnDirected(z, w, e1);
+                        Chain_Edge_Fixing_UnDirected(w, z, e2);
 
+                        bool res = TryToFix();
+
+                        if (res)
+                            return true;
+
+                    }
                 }
             }
 

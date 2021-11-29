@@ -12,7 +12,7 @@ namespace GraphDecomposer.Utils
             r = new Random();            
         }
         
-        public static void ShuffleArray<T>(List<T> z)
+        public static void Shuffle<T>(List<T> z)
         {
             for (int i = 0; i < z.Count; i++)
             {

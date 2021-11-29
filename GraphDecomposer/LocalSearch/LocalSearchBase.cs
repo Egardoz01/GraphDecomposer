@@ -58,6 +58,11 @@ namespace GraphDecomposer.LocalSearch
             before = c11.Count + c21.Count;
         }
 
+        protected bool checkOriginalCicles()
+        {
+            return !(z.CheckEqualCicle(OriginalW) || z.CheckEqualCicle(OriginalZ) || w.CheckEqualCicle(OriginalZ) || w.CheckEqualCicle(OriginalW));
+        }
+
         public abstract bool DoLocalSearch();
 
     }

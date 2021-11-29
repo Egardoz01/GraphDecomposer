@@ -1,27 +1,36 @@
 {
   "tests": [
+
     /*{
-      "model": "dfd+ls",
-      "directed": false,
-      "nVertices": 32,
-      "nTests": 1,
-      "testFile": "InputData\\test32.txt"
-    }*/
- 
-    {
-      "model": "dfd+ls",
-      "directed": false,
+      "model": "dfd",
+      "directed": true,
       "nVertices": 192,
       "nTests": 100,
       "testFile": "InputData\\test192.txt"
     },
+    */
     {
+      "model": "dfd+ls",
+      "directed": true,
+      "nVertices": 192,
+      "nTests": 100,
+      "testFile": "InputData\\test192.txt"
+    }
+
+    /*{
       "model": "dfd+ls",
       "directed": false,
       "nVertices": 256,
       "nTests": 100,
       "testFile": "InputData\\test256.txt"
-    }
+    },
 
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 512,
+      "nTests": 100,
+      "testFile": "InputData\\test512.txt"
+    }*/
   ]
 }
