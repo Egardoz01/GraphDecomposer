@@ -1,5 +1,13 @@
 {
   "tests": [
+    /*{
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 32,
+      "nTests": 1,
+      "testFile": "InputData\\test32.txt"
+    }*/
+ 
     {
       "model": "dfd+ls",
       "directed": false,
@@ -14,20 +22,6 @@
       "nTests": 100,
       "testFile": "InputData\\test256.txt"
     }
-    /* {
-      "model": "dfd+ls",
-      "directed": false,
-      "nVertices": 192,
-      "nTests": 10,
-      "testFile": "InputData\\test192.txt"
-    },
-    {
-      "model": "dfd+ls",
-      "directed": false,
-      "nVertices": 256,
-      "nTests": 10,
-      "testFile": "InputData\\test256.txt"
-    }
-  */
+
   ]
 }

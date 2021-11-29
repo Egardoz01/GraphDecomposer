@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphDecomposer.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,7 @@ namespace GraphDecomposer
             g.GraphId = this.GraphId;
             return g;
         }
+
         public void Add(Edge e, bool addToEdgesArray = true)
         {
             if (addToEdgesArray)
@@ -61,6 +63,7 @@ namespace GraphDecomposer
                 }
                 edges.Add(e);
             }
+
             nEdges++;
             edgesFrom[e.from].Add(e);
             edgesTo[e.to].Add(e);
@@ -277,6 +280,22 @@ namespace GraphDecomposer
                     }
                 }
             }
+        }
+
+
+        public bool CheckEqualCicle(Graph other)
+        {
+            var s1 = this.FindCycle();
+            var s2 = other.FindCycle();
+
+            if (ArrayUtils.Equals(s1, s2))
+                return true;
+
+            Array.Reverse(s2, 1, s2.Length - 1);
+            if (ArrayUtils.Equals(s1, s2))
+                return true;
+
+            return false;
         }
     }
 }
