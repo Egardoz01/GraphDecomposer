@@ -17,14 +17,15 @@ namespace GraphDecomposer.LocalSearch
         protected int before;
         protected Graph OriginalZ;
         protected Graph OriginalW;
-        public LocalSearchBase(Graph z, Graph w, int attemptLimit, TestInput input)
+        protected bool secondNeighbour;
+        public LocalSearchBase(Graph z, Graph w, int attemptLimit, TestInput input, bool secondNeighbour)
         {
             this.z = z;
             this.w = w;
             this.attemptLimit = attemptLimit;
             this.OriginalZ = input.x;
             this.OriginalW = input.y;
-
+            this.secondNeighbour = secondNeighbour;
             Init();
         }
 
@@ -37,14 +38,16 @@ namespace GraphDecomposer.LocalSearch
                 fixed_edges.Add(0);
             }
 
-            int cntFIxed = 0;
+            int cntFIxed1 = 0;
             foreach (Edge e in z.edges)
             {
-                var same_edge = w.edges.FindAll(x => x.GetHashCode() == e.GetHashCode());
+                var same_edge = w.edgesFrom[e.from].FindAll(x=> x.GetHashCode()==e.GetHashCode());
+
+                same_edge.AddRange(w.edgesTo[e.from].FindAll(x => x.GetHashCode() == e.GetHashCode()));
 
                 if (same_edge.Count > 0)
                 {
-                    cntFIxed++;
+                    cntFIxed1++;
                     fixed_edges[e.Id] = 2;
                     fixed_edges[same_edge[0].Id] = 2;
                 }

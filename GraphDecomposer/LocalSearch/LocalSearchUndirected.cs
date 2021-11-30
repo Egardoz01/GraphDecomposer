@@ -9,9 +9,8 @@ namespace GraphDecomposer.LocalSearch
     {
 
 
-        public LocalSearchUndirected(Graph z, Graph w, int attemptLimit, TestInput input) : base(z, w, attemptLimit, input)
+        public LocalSearchUndirected(Graph z, Graph w, int attemptLimit, TestInput input, bool secondNeighbour) : base(z, w, attemptLimit, input, secondNeighbour)
         {
-
         }
 
         public override bool DoLocalSearch()
@@ -42,8 +41,10 @@ namespace GraphDecomposer.LocalSearch
                 }
             }
 
-            return LocalSearchUnDirectedSecondNeighborhood();
-            // return false;
+            if (secondNeighbour)
+                return LocalSearchUnDirectedSecondNeighborhood();
+
+            return false;
         }
 
 
@@ -232,7 +233,7 @@ namespace GraphDecomposer.LocalSearch
 
         private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e)
         {
-     
+
 
             int i = e.from;
             int j = e.to;
@@ -322,7 +323,7 @@ namespace GraphDecomposer.LocalSearch
             ArrayUtils.Shuffle(edgesToTryZ);
             for (int i = 0; i < edgesToTryZ.Count; i++)
             {
-                for (int j = 0; j < edgesToTryW.Count; j++)
+                for (int j = 0; j < Math.Min(edgesToTryW.Count, 3); j++)
                 {
                     var e1 = edgesToTryZ[i];
                     var e2 = edgesToTryW[j];

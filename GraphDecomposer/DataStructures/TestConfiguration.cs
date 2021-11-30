@@ -13,5 +13,6 @@ namespace GraphDecomposer.DataStructures
         public string testFile;
         public int solvable;
         public int unsolvable;
+        public bool secondNeighbour;
     }
 }

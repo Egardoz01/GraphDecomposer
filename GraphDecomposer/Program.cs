@@ -14,8 +14,14 @@ namespace GraphDecomposer
     {
         static void Main(string[] args)
         {
-            DoConfigurationTesting();
+            //DoConfigurationTesting();
+            TestDFDOptimized();
+            TestDFDOptimizedSecondNeighbour();
+            //TestDFD();
+            //TestMTZ();
         }
+
+
 
 
         static void DoConfigurationTesting()
@@ -35,12 +41,30 @@ namespace GraphDecomposer
             }
         }
 
+        static void TestDFDOptimizedSecondNeighbour()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+           
+            for (int i=0; i<conf.Count; i++)
+            {
+                var test = conf[i];
+                test.model = "dfd+ls+second Neighbourhood";
+                test.secondNeighbour = true;
+                DoTest(solver, test);
+            }
+        }
+
+
         static void TestDFDOptimized()
         {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFDOptimized solver = new SolverDFDOptimized();
-            foreach (var test in conf)
+
+            for (int i = 0; i < conf.Count; i++)
             {
+                var test = conf[i];
+                test.model = "dfd+ls";
                 DoTest(solver, test);
             }
         }
@@ -49,8 +73,10 @@ namespace GraphDecomposer
         {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFD solver = new SolverDFD();
-            foreach (var test in conf)
+            for (int i = 0; i < conf.Count; i++)
             {
+                var test = conf[i];
+                test.model = "dfd";
                 DoTest(solver, test);
             }
         }
@@ -59,8 +85,10 @@ namespace GraphDecomposer
         {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverMTZ solver = new SolverMTZ();
-            foreach (var test in conf)
+            for (int i = 0; i < conf.Count; i++)
             {
+                var test = conf[i];
+                test.model = "mtz";
                 DoTest(solver, test);
             }
         }

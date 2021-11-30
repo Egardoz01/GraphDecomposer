@@ -7,7 +7,7 @@ namespace GraphDecomposer.LocalSearch
 {
     public class LocalSearchDirected : LocalSearchBase
     {
-        public LocalSearchDirected(Graph z, Graph w, int attemptLimit, TestInput input) : base(z, w, attemptLimit, input)
+        public LocalSearchDirected(Graph z, Graph w, int attemptLimit, TestInput input, bool secondNeighbour) : base(z, w, attemptLimit, input, secondNeighbour)
         {
 
         }
@@ -116,8 +116,9 @@ namespace GraphDecomposer.LocalSearch
                     var e2 = edgesToTryW[j];
 
                     MoveEdge(z, w, e1);
-                    MoveEdge(w, z, e2);
+
                     Chain_Edge_Fixing_Directed(z, w, e1);
+                    MoveEdge(w, z, e2);
                     Chain_Edge_Fixing_Directed(w, z, e2);
 
                     var a = z.findSubCicles();

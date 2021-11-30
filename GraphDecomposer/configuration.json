@@ -1,36 +1,98 @@
-{
+﻿{
   "tests": [
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 128,
+      "nTests": 100,
+      "testFile": "InputData\\test128p.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 256,
+      "nTests": 100,
+      "testFile": "InputData\\test256p.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 512,
+      "nTests": 100,
+      "testFile": "InputData\\test512p.txt"
+    }
+    /*
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 1024,
+      "nTests": 100,
+      "testFile": "InputData\\test1024.txt"
+    }*/
+    /* {
+      "model": "dfd+ls",
+      "directed": true,
+      "nVertices": 256,
+      "nTests": 100,
+      "testFile": "InputData\\test256.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": true,
+      "nVertices": 512,
+      "nTests": 100,
+      "testFile": "InputData\\test512.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": true,
+      "nVertices": 768,
+      "nTests": 100,
+      "testFile": "InputData\\test768.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": true,
+      "nVertices": 1024,
+      "nTests": 100,
+      "testFile": "InputData\\test1024.txt"
+    },*/
 
     /*{
-      "model": "dfd",
-      "directed": true,
+      "model": "dfd+ls",
+      "directed": false,
       "nVertices": 192,
       "nTests": 100,
       "testFile": "InputData\\test192.txt"
     },
-    */
     {
-      "model": "dfd+ls",
-      "directed": true,
-      "nVertices": 192,
-      "nTests": 100,
-      "testFile": "InputData\\test192.txt"
-    }
-
-    /*{
       "model": "dfd+ls",
       "directed": false,
       "nVertices": 256,
       "nTests": 100,
       "testFile": "InputData\\test256.txt"
     },
-
     {
       "model": "dfd+ls",
       "directed": false,
       "nVertices": 512,
       "nTests": 100,
       "testFile": "InputData\\test512.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 768,
+      "nTests": 100,
+      "testFile": "InputData\\test768.txt"
+    },*/
+    /*
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 1024,
+      "nTests": 100,
+      "testFile": "InputData\\test1024bi.txt"
     }*/
   ]
 }
