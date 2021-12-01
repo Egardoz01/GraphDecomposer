@@ -31,6 +31,7 @@ namespace GraphDecomposer.Results
             List<double> unsolvedIterations = new List<double>();
             List<double> unsolvedTime = new List<double>();
 
+            double doubleEdgesCnt = 0;
             foreach (var res in solverResults)
             {
                 if (res.solutionExistance)
@@ -43,6 +44,8 @@ namespace GraphDecomposer.Results
                     unsolvedTime.Add(res.millisecondsElapsed / 1000.0);
                     unsolvedIterations.Add(res.iterationsCnt);
                 }
+
+                doubleEdgesCnt += res.InitialZ.FindDoubleEdges(res.InitialW).Count;
             }
             List<string> lines = new List<string>(); ;
 
@@ -51,7 +54,7 @@ namespace GraphDecomposer.Results
             lines.Add((conf.directed ? "directed" : "undirected") + " graph");
             lines.Add($"Vertex amount {conf.nVertices}");
             lines.Add($"Tests amount {conf.nTests}");
-
+            lines.Add($"Average Double Edges Amount { doubleEdgesCnt / conf.nTests }");
 
 
             if (solvedTime.Count > 0)

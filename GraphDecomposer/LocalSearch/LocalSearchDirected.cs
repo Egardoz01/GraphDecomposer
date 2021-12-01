@@ -1,4 +1,5 @@
-﻿using GraphDecomposer.Utils;
+﻿using GraphDecomposer.DataStructures;
+using GraphDecomposer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,8 @@ namespace GraphDecomposer.LocalSearch
 {
     public class LocalSearchDirected : LocalSearchBase
     {
-        public LocalSearchDirected(Graph z, Graph w, int attemptLimit, TestInput input, bool secondNeighbour) : base(z, w, attemptLimit, input, secondNeighbour)
+
+        public LocalSearchDirected(Graph z, Graph w, int attemptLimit, TestInput input, TestConfiguration conf) : base(z, w, attemptLimit, input, conf)
         {
 
         }

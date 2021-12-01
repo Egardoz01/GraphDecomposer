@@ -56,9 +56,11 @@ namespace GraphDecomposer
         {
             if (addToEdgesArray)
             {
-                if (edges.FindAll(x => x.Id == e.Id).Count > 0)
-                {
+                var bebra = edges.FindIndex(x => x.Id == e.Id);
 
+                if (bebra !=-1)
+                {
+                  //  int i = 0;
                     throw new Exception("Bruh");
                 }
                 edges.Add(e);
@@ -84,16 +86,20 @@ namespace GraphDecomposer
         {
             if (addToEdgesArray)
             {
-                if (!edges.Contains(e))
+                var bebra = edges.FindIndex(x => x.Id == e.Id);
+                if (bebra == -1)
                 {
+                   // int i = 0;
                     throw new Exception("Bruh");
                 }
-                edges.Remove(e);
+                edges.RemoveAt(bebra);
             }
             nEdges--;
             edgesFrom[e.from].RemoveAll(x => x.Id == e.Id);
             edgesTo[e.to].RemoveAll(x => x.Id == e.Id);
         }
+
+
 
         public int[] FindCycle()
         {
@@ -297,5 +303,53 @@ namespace GraphDecomposer
 
             return false;
         }
+
+        public List<Edge> FindDoubleEdges(Graph other)
+        {
+            List<Edge> doubleEdges = new List<Edge>();
+            foreach (Edge e in this.edges)
+            {
+                var same_edge = other.edgesFrom[e.from].FindAll(x => x.GetHashCode() == e.GetHashCode());
+
+                same_edge.AddRange(other.edgesTo[e.from].FindAll(x => x.GetHashCode() == e.GetHashCode()));
+
+                if (same_edge.Count > 0)
+                {
+                    doubleEdges.Add(e);
+                    doubleEdges.Add(same_edge[0]);
+                }
+            }
+
+            return doubleEdges;
+        }
+
+        public List<int> GetIncidentVerteces(int A)
+        {
+            List<int> incidentToA = new List<int>();
+
+            foreach (var edge in this.edgesFrom[A])
+            {
+                incidentToA.Add(edge.to);
+            }
+
+            foreach (var edge in this.edgesTo[A])
+            {
+                incidentToA.Add(edge.from);
+            }
+
+            return incidentToA;
+        }
+
+        public Edge? GetEdgeBetween(int C, int D)
+        {
+            var CD = this.edgesFrom[C].FindAll(x => x.to == D);
+            CD.AddRange(this.edgesTo[C].FindAll(x => x.from == D));
+
+            if (CD.Count == 0)
+                return null;
+
+            return CD[0];
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using GraphDecomposer.Utils;
+﻿using GraphDecomposer.DataStructures;
+using GraphDecomposer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,11 +10,101 @@ namespace GraphDecomposer.LocalSearch
     {
 
 
-        public LocalSearchUndirected(Graph z, Graph w, int attemptLimit, TestInput input, bool secondNeighbour) : base(z, w, attemptLimit, input, secondNeighbour)
+        public LocalSearchUndirected(Graph z, Graph w, int attemptLimit, TestInput input, TestConfiguration conf) : base(z, w, attemptLimit, input, conf)
         {
         }
 
         public override bool DoLocalSearch()
+        {
+            if (conf.zeroNeighbour)
+                return ZeroNeighborhood();
+            else if (conf.firstNeighbourhood)
+                return FirstNeighborhood();
+            else if (conf.secondNeighbour)
+                return SecondNeighborhood();
+
+            return false;
+        }
+
+        private bool ZeroNeighborhood()
+        {
+
+            List<Edge> edgesToTry = new List<Edge>();
+            for (int i = 0; i < z.edges.Count; i++)
+            {
+                var e = z.edges[i];
+                if (fixed_edges[e.Id] != 2)
+                    edgesToTry.Add(z.edges[i]);
+            }
+
+            ArrayUtils.Shuffle(edgesToTry);
+
+            for (int i = 0; i < edgesToTry.Count; i++)
+            {
+                var e = edgesToTry[i];
+
+                int A = e.from;
+                int B = e.to;
+
+                List<int> incidentToAInW = w.GetIncidentVerteces(A);
+                List<int> incidentToBInW = w.GetIncidentVerteces(B);
+
+                foreach (var C in incidentToAInW)
+                {
+                    foreach (var D in incidentToBInW)
+                    {
+                        var CD = z.GetEdgeBetween(C, D);
+
+                        if (!CD.HasValue)
+                            continue;
+
+                        var AC = w.GetEdgeBetween(A, C);
+                        var BD = w.GetEdgeBetween(B, D);
+
+                        if (fixed_edges[CD.Value.Id] == 2 || fixed_edges[AC.Value.Id] == 2 || fixed_edges[BD.Value.Id] == 2)
+                        {
+                            continue;
+                        }
+
+                        MoveEdge(z, w, e);
+                        MoveEdge(z, w, CD.Value);
+                        MoveEdge(w, z, AC.Value);
+                        MoveEdge(w, z, BD.Value);
+
+                        var a = z.findSubCicles();
+                        var b = w.findSubCicles();
+                        if (a.Count + b.Count < before)
+                        {
+                            if (a.Count + b.Count != 0 || checkOriginalCicles())
+                            {
+                                z.RestoreEdges();
+                                w.RestoreEdges();
+                                return true;
+                            }
+
+                        }
+
+                        BackToOriginal();
+
+                    }
+                }
+            }
+
+            if (brokenVerticses.Count != 0)
+            {
+                throw new Exception("Bruh");
+            }
+
+            z.RestoreEdges();
+            w.RestoreEdges();
+
+            if (conf.firstNeighbourhood)
+                return FirstNeighborhood();
+
+            return false;
+        }
+
+        private bool FirstNeighborhood()
         {
             List<Edge> edgesToTry = new List<Edge>();
             for (int i = 0; i < z.edges.Count; i++)
@@ -28,7 +119,6 @@ namespace GraphDecomposer.LocalSearch
             {
                 var e = edgesToTry[i];
                 int attempts = attemptLimit;
-                brokenVerticses = new List<int>();
                 while (attempts-- > 0)
                 {
                     MoveEdge(z, w, e);
@@ -41,12 +131,15 @@ namespace GraphDecomposer.LocalSearch
                 }
             }
 
-            if (secondNeighbour)
-                return LocalSearchUnDirectedSecondNeighborhood();
+            z.RestoreEdges();
+            w.RestoreEdges();
+
+
+            if (conf.secondNeighbour)
+                return SecondNeighborhood();
 
             return false;
         }
-
 
 
         private bool TryToFix()
@@ -195,45 +288,67 @@ namespace GraphDecomposer.LocalSearch
                 }
             }
 
-            w = optimalW.Copy();
-            z = optimalZ.Copy();
-
-            for (int j = 0; j < fixed_edges.Count; j++)
-                if (fixed_edges[j] != 2)
-                    fixed_edges[j] = 0;
+            BackToOriginal();
 
             return false;
         }
 
+        private void BackToOriginal()
+        {
+            foreach (var e in movedFromZ)
+            {
+                MoveEdge(w, z, e, false);
+                fixed_edges[e.Id] = 0;
+            }
+            foreach (var e in movedFromW)
+            {
+                MoveEdge(z, w, e, false);
+                fixed_edges[e.Id] = 0;
+            }
 
+            movedFromZ = new List<Edge>();
+            movedFromW = new List<Edge>();
+            brokenVerticses = new List<int>();
+        }
 
-        private void MoveEdge(Graph z, Graph w, Edge e)
+        private void MoveEdge(Graph z, Graph w, Edge e, bool countBroken = true)
         {
             fixed_edges[e.Id] = 1;
             z.Remove(e, false);
             w.Add(e, false);
 
-            Graph g = z.GraphId == 1 ? z : w;
-            if (g.edgesFrom[e.from].Count + g.edgesTo[e.from].Count != 2)
+          
+            if (countBroken)
             {
-                if (!brokenVerticses.Contains(e.from))
-                    brokenVerticses.Add(e.from);
-            }
-            else
-                brokenVerticses.Remove(e.from);
+                if (z.GraphId == 1)
+                    movedFromZ.Add(e);
+                else
+                    movedFromW.Add(e);
 
-            if (g.edgesFrom[e.to].Count + g.edgesTo[e.to].Count != 2)
-            {
-                if (!brokenVerticses.Contains(e.to))
-                    brokenVerticses.Add(e.to);
+
+                Graph g = z.GraphId == 1 ? z : w;
+                if (g.edgesFrom[e.from].Count + g.edgesTo[e.from].Count != 2)
+                {
+                    if (!brokenVerticses.Contains(e.from))
+                        brokenVerticses.Add(e.from);
+                }
+                else
+                    brokenVerticses.Remove(e.from);
+
+                if (g.edgesFrom[e.to].Count + g.edgesTo[e.to].Count != 2)
+                {
+                    if (!brokenVerticses.Contains(e.to))
+                        brokenVerticses.Add(e.to);
+                }
+                else
+                    brokenVerticses.Remove(e.to);
+
             }
-            else
-                brokenVerticses.Remove(e.to);
+
         }
 
         private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e)
         {
-
 
             int i = e.from;
             int j = e.to;
@@ -301,7 +416,7 @@ namespace GraphDecomposer.LocalSearch
 
 
 
-        private bool LocalSearchUnDirectedSecondNeighborhood()
+        private bool SecondNeighborhood()
         {
 
             List<Edge> edgesToTryZ = new List<Edge>();
@@ -329,7 +444,6 @@ namespace GraphDecomposer.LocalSearch
                     var e2 = edgesToTryW[j];
 
                     int attempts = attemptLimit;
-                    brokenVerticses = new List<int>();
                     while (attempts-- > 0)
                     {
                         MoveEdge(z, w, e1);
@@ -349,8 +463,5 @@ namespace GraphDecomposer.LocalSearch
 
             return false;
         }
-
-
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphDecomposer.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,40 +18,36 @@ namespace GraphDecomposer.LocalSearch
         protected int before;
         protected Graph OriginalZ;
         protected Graph OriginalW;
-        protected bool secondNeighbour;
-        public LocalSearchBase(Graph z, Graph w, int attemptLimit, TestInput input, bool secondNeighbour)
+        protected TestConfiguration conf;
+        protected List<Edge> movedFromZ;
+        protected List<Edge> movedFromW;
+        public LocalSearchBase(Graph z, Graph w, int attemptLimit, TestInput input, TestConfiguration conf)
         {
             this.z = z;
             this.w = w;
             this.attemptLimit = attemptLimit;
             this.OriginalZ = input.x;
             this.OriginalW = input.y;
-            this.secondNeighbour = secondNeighbour;
+            this.conf = conf;
             Init();
         }
 
         private void Init()
         {
             fixed_edges = new List<int>();
+            brokenVerticses = new List<int>();
+            movedFromZ = new List<Edge>();
+            movedFromW = new List<Edge>();
 
             for (int i = 0; i <= z.nVertices * 2; i++)
             {
                 fixed_edges.Add(0);
             }
+            var doubleEdges = z.FindDoubleEdges(w);
 
-            int cntFIxed1 = 0;
-            foreach (Edge e in z.edges)
+            foreach (var e in doubleEdges)
             {
-                var same_edge = w.edgesFrom[e.from].FindAll(x=> x.GetHashCode()==e.GetHashCode());
-
-                same_edge.AddRange(w.edgesTo[e.from].FindAll(x => x.GetHashCode() == e.GetHashCode()));
-
-                if (same_edge.Count > 0)
-                {
-                    cntFIxed1++;
-                    fixed_edges[e.Id] = 2;
-                    fixed_edges[same_edge[0].Id] = 2;
-                }
+                fixed_edges[e.Id] = 2;
             }
 
             optimalZ = z.Copy();
@@ -59,6 +56,7 @@ namespace GraphDecomposer.LocalSearch
             var c11 = z.findSubCicles();
             var c21 = w.findSubCicles();
             before = c11.Count + c21.Count;
+
         }
 
         protected bool checkOriginalCicles()

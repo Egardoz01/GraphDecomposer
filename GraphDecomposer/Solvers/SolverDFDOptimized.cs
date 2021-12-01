@@ -67,9 +67,9 @@ namespace GraphDecomposer.Solvers
                     z.GraphId = 1;
                     w.GraphId = 2;
                     if (conf.directed)
-                        localSearch = new LocalSearchDirected(z, w, 5, testInput, conf.secondNeighbour);
+                        localSearch = new LocalSearchDirected(z, w, 5, testInput, conf);
                     else
-                        localSearch = new LocalSearchUndirected(z, w, 5, testInput, conf.secondNeighbour);
+                        localSearch = new LocalSearchUndirected(z, w, 5, testInput, conf);
 
                     repeat = localSearch.DoLocalSearch();
                     z = localSearch.z;

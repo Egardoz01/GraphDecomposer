@@ -1,11 +1,27 @@
 ﻿{
   "tests": [
+
+
     {
       "model": "dfd+ls",
       "directed": false,
-      "nVertices": 128,
+      "nVertices": 256,
       "nTests": 100,
-      "testFile": "InputData\\test128p.txt"
+      "testFile": "InputData\\test256.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 256,
+      "nTests": 100,
+      "testFile": "InputData\\test256bi.txt"
+    },
+    {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 256,
+      "nTests": 100,
+      "testFile": "InputData\\test256psb.txt"
     },
     {
       "model": "dfd+ls",
@@ -13,37 +29,37 @@
       "nVertices": 256,
       "nTests": 100,
       "testFile": "InputData\\test256p.txt"
-    },
-    {
+    }
+    /* {
       "model": "dfd+ls",
       "directed": false,
       "nVertices": 512,
       "nTests": 100,
       "testFile": "InputData\\test512p.txt"
-    }
-    /*
+    }*/
+
+    /*{
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 192,
+      "nTests": 100,
+      "testFile": "InputData\\test192.txt"
+    },
     {
       "model": "dfd+ls",
       "directed": false,
-      "nVertices": 1024,
-      "nTests": 100,
-      "testFile": "InputData\\test1024.txt"
-    }*/
-    /* {
-      "model": "dfd+ls",
-      "directed": true,
       "nVertices": 256,
       "nTests": 100,
       "testFile": "InputData\\test256.txt"
     },
     {
       "model": "dfd+ls",
-      "directed": true,
+      "directed": false,
       "nVertices": 512,
       "nTests": 100,
       "testFile": "InputData\\test512.txt"
-    },
-    {
+    }*/
+    /* {
       "model": "dfd+ls",
       "directed": true,
       "nVertices": 768,
