@@ -3,6 +3,7 @@ using GraphDecomposer.LocalSearch;
 using GraphDecomposer.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace GraphDecomposer.Solvers
@@ -21,11 +22,19 @@ namespace GraphDecomposer.Solvers
         {
             int iterationsCnt = 0;
             LocalSearchBase localSearch;
+            int gorubiTime = 0;
+            int localSearchTime = 0;
+            Stopwatch gurubiTimer = new Stopwatch();
+            Stopwatch LinearSearchTimer = new Stopwatch();
+
             while (true)
             {
                 iterationsCnt++;
 
+                gurubiTimer.Start();
                 model.Optimize();
+                gurubiTimer.Stop();
+
 
                 bool hasSol = model.SolCount > 0;
                 if (!hasSol)
@@ -54,24 +63,29 @@ namespace GraphDecomposer.Solvers
                     var zSubCicles = z.findSubCicles();
                     var wSubCicles = w.findSubCicles();
 
+                    gurubiTimer.Start();
                     foreach (var cicle in zSubCicles)
                         addCicleConstr(cicle);
                     foreach (var cicle in wSubCicles)
                         addCicleConstr(cicle);
+                    gurubiTimer.Stop();
 
                     if (zSubCicles.Count == 0 && wSubCicles.Count == 0)
                     {
-                        return new SolverResult(iterationsCnt, true, z, w);// yes solution
+                        return new SolverResult(iterationsCnt, true, z, w, gurubiTimer.ElapsedMilliseconds, LinearSearchTimer.ElapsedMilliseconds);// yes solution
                     }
 
                     z.GraphId = 1;
                     w.GraphId = 2;
                     if (conf.directed)
-                        localSearch = new LocalSearchDirected(z, w, 5, testInput, conf);
+                        localSearch = new LocalSearchDirected(z, w, 1, testInput, conf);
                     else
-                        localSearch = new LocalSearchUndirected(z, w, 5, testInput, conf);
+                        localSearch = new LocalSearchUndirected(z, w, 1, testInput, conf);
 
+                    LinearSearchTimer.Start();
                     repeat = localSearch.DoLocalSearch();
+                    LinearSearchTimer.Stop();
+
                     z = localSearch.z;
                     w = localSearch.w;
                 }

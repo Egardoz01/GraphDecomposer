@@ -30,6 +30,8 @@ namespace GraphDecomposer.Results
             List<double> solvedIterations = new List<double>();
             List<double> unsolvedIterations = new List<double>();
             List<double> unsolvedTime = new List<double>();
+            List<double> gurubiTime = new List<double>();
+            List<double> localSearchTime = new List<double>();
 
             double doubleEdgesCnt = 0;
             foreach (var res in solverResults)
@@ -46,6 +48,8 @@ namespace GraphDecomposer.Results
                 }
 
                 doubleEdgesCnt += res.InitialZ.FindDoubleEdges(res.InitialW).Count;
+                gurubiTime.Add(res.millisecondsGorubi / 1000.0);
+                localSearchTime.Add(res.millisecondsLinearSearch / 1000.0);
             }
             List<string> lines = new List<string>(); ;
 
@@ -55,7 +59,10 @@ namespace GraphDecomposer.Results
             lines.Add($"Vertex amount {conf.nVertices}");
             lines.Add($"Tests amount {conf.nTests}");
             lines.Add($"Average Double Edges Amount { doubleEdgesCnt / conf.nTests }");
-
+            lines.Add($"M(gorubi working time) { countM(gurubiTime)}");
+            lines.Add($"Sd(gurubi working time) { countSd(gurubiTime)}");
+            lines.Add($"M(local search working time) { countM(localSearchTime)}");
+            lines.Add($"Sd(local search working time) { countSd(localSearchTime)}");
 
             if (solvedTime.Count > 0)
             {

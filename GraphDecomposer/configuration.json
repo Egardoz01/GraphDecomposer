@@ -1,15 +1,34 @@
 ﻿{
   "tests": [
-
-
     {
       "model": "dfd+ls",
       "directed": false,
-      "nVertices": 256,
+      "nVertices": 1024,
       "nTests": 100,
-      "testFile": "InputData\\test256.txt"
+      "testFile": "InputData\\test1024.txt"
+    },
+    /*{
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 1024,
+      "nTests": 100,
+      "testFile": "InputData\\test1024_4peaks.txt"
+    }*/
+    /*{
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 512,
+      "nTests": 100,
+      "testFile": "InputData\\test512_4peaks.txt"
     },
     {
+      "model": "dfd+ls",
+      "directed": false,
+      "nVertices": 512,
+      "nTests": 100,
+      "testFile": "InputData\\test512p.txt"
+    }*/
+    /*,{
       "model": "dfd+ls",
       "directed": false,
       "nVertices": 256,
@@ -29,7 +48,7 @@
       "nVertices": 256,
       "nTests": 100,
       "testFile": "InputData\\test256p.txt"
-    }
+    }*/
     /* {
       "model": "dfd+ls",
       "directed": false,

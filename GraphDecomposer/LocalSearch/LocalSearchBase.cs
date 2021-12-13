@@ -21,6 +21,7 @@ namespace GraphDecomposer.LocalSearch
         protected TestConfiguration conf;
         protected List<Edge> movedFromZ;
         protected List<Edge> movedFromW;
+
         public LocalSearchBase(Graph z, Graph w, int attemptLimit, TestInput input, TestConfiguration conf)
         {
             this.z = z;
@@ -50,11 +51,10 @@ namespace GraphDecomposer.LocalSearch
                 fixed_edges[e.Id] = 2;
             }
 
-            optimalZ = z.Copy();
-            optimalW = w.Copy();
 
             var c11 = z.findSubCicles();
             var c21 = w.findSubCicles();
+
             before = c11.Count + c21.Count;
 
         }

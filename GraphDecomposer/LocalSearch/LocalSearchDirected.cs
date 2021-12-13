@@ -69,8 +69,8 @@ namespace GraphDecomposer.LocalSearch
                     }
                 }
 
-                w = optimalW.Copy();
-                z = optimalZ.Copy();
+              //  w = optimalW.Copy();
+               // z = optimalZ.Copy();  doto some fix
 
 
                 for (int j = 0; j < fixed_edges.Count; j++)

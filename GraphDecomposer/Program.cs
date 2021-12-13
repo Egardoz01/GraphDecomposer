@@ -15,10 +15,13 @@ namespace GraphDecomposer
         static void Main(string[] args)
         {
             //DoConfigurationTesting();
-            //TestDFDOptimized1();
-            //TestDFDOptimized01();
-            TestDFDOptimized012();
-           // TestDFDOptimized0();
+
+            // TestDFDOptimized12();
+            //TestDFDOptimized13NoChainFix();
+            //TestDFDOptimized13();
+            TestDFDOptimized1();
+            //TestDFDOptimized2();
+            // TestDFDOptimized23();
             // TestDFD();
             //TestMTZ();
         }
@@ -74,6 +77,50 @@ namespace GraphDecomposer
             }
         }
 
+        static void TestDFDOptimized12()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.model = "dfd+ls 1 2";
+                test.firstNeighbourhood = true;
+                test.secondNeighbour = true;
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized2()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.model = "dfd+ls 2";
+                test.secondNeighbour = true;
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized02()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.model = "dfd+ls 0-2";
+                test.zeroNeighbour = true;
+                test.secondNeighbour = true;
+                DoTest(solver, test);
+            }
+        }
+
         static void TestDFDOptimized0()
         {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
@@ -100,6 +147,85 @@ namespace GraphDecomposer
                 var test = conf[i];
                 test.firstNeighbourhood = true;
                 test.model = "dfd+ls 1";
+                DoTest(solver, test);
+            }
+        }
+
+
+        static void TestDFDOptimized13()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.firstNeighbourhood = true;
+                test.thirdNeighbourhood = true;
+                test.model = "dfd+ls 1 3";
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized13NoChainFix()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.firstNeighbourhood = true;
+                test.thirdNeighbourhood = true;
+                test.noChainFix = true;
+                test.model = "dfd+ls 1 3 no fix";
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized013()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.zeroNeighbour = true;
+                test.firstNeighbourhood = true;
+                test.thirdNeighbourhood = true;
+                test.model = "dfd+ls 0 1 3";
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized03()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.zeroNeighbour = true;
+                test.zeroNeighbour = true;
+                test.thirdNeighbourhood = true;
+                test.model = "dfd+ls 0 1 3";
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized23()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.secondNeighbour = true;
+                test.thirdNeighbourhood = true;
+                test.model = "dfd+ls 2 3";
                 DoTest(solver, test);
             }
         }

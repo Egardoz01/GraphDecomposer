@@ -16,5 +16,7 @@ namespace GraphDecomposer.DataStructures
         public bool secondNeighbour;
         public bool zeroNeighbour;
         public bool firstNeighbourhood;
+        public bool thirdNeighbourhood;
+        public bool noChainFix;
     }
 }
