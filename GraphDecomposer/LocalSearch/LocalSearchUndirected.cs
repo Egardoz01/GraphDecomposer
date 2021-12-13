@@ -120,7 +120,7 @@ namespace GraphDecomposer.LocalSearch
             }
 
             ArrayUtils.Shuffle(edgesToTry);
-            for (int i = 0; i<edgesToTry.Count; i++)
+            for (int i = 0; i < edgesToTry.Count; i++)
             {
                 var e = edgesToTry[i];
                 int attempts = attemptLimit;
@@ -550,31 +550,147 @@ namespace GraphDecomposer.LocalSearch
 
 
 
-        private void Chain_Edge_Fixing_UnDirectedNoRecursion(Graph z, Graph w, Edge e)
+        private void Chain_Edge_Fixing_UnDirectedNoRecursion(Graph z, Graph w, Edge initialEdge)
         {
             if (conf.noChainFix)
                 return;
 
-            int i = e.from;
-            int j = e.to;
+            Stack<int> vertices = new Stack<int>();
+            vertices.Push(initialEdge.from);
+            vertices.Push(initialEdge.to);
 
-            Chain_For_vertex(z, w, i);
-            Chain_For_vertex(z, w, j);
+            while (vertices.Count > 0)
+            {
+                int i = vertices.Pop();
+                int cntFixed = 0;
 
+                foreach (var edge in w.edgesFrom[i])
+                    if (fixed_edges[edge.Id] != 0)
+                        cntFixed++;
+
+                foreach (var edge in w.edgesTo[i])
+                    if (fixed_edges[edge.Id] != 0)
+                        cntFixed++;
+
+                if (cntFixed == 2)
+                {
+                    for (int ind = 0; ind < w.edgesFrom[i].Count; ind++)
+                    {
+                        var edge = w.edgesFrom[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            MoveEdge(w, z, edge);
+                            vertices.Push(edge.to);
+                        }
+                    }
+
+                    for (int ind = 0; ind < w.edgesTo[i].Count; ind++)
+                    {
+                        var edge = w.edgesTo[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            MoveEdge(w, z, edge);
+                            vertices.Push(edge.from);
+                        }
+                    }
+
+
+                   for (int ind = 0; ind < z.edgesFrom[i].Count; ind++)
+                    {
+                        var edge = z.edgesFrom[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            fixed_edges[edge.Id] = 1;
+                            vertices.Push(edge.to);
+                        }
+                    }
+
+                    for (int ind = 0; ind < z.edgesTo[i].Count; ind++)
+                    {
+                        var edge = z.edgesTo[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            fixed_edges[edge.Id] = 1;
+                            vertices.Push(edge.from);
+                        }
+                    }
+               
+                }
+
+                cntFixed = 0;
+
+                foreach (var edge in z.edgesFrom[i])
+                    if (fixed_edges[edge.Id] != 0)
+                        cntFixed++;
+
+                foreach (var edge in z.edgesTo[i])
+                    if (fixed_edges[edge.Id] != 0)
+                        cntFixed++;
+
+                if (cntFixed == 2)
+                {
+                    for (int ind = 0; ind < z.edgesFrom[i].Count; ind++)
+                    {
+                        var edge = z.edgesFrom[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            MoveEdge(z, w, edge);
+                            vertices.Push(edge.to);
+                        }
+                    }
+
+                    for (int ind = 0; ind < z.edgesTo[i].Count; ind++)
+                    {
+                        var edge = z.edgesTo[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            MoveEdge(z, w, edge);
+                            vertices.Push(edge.from);
+                        }
+                    }
+  
+                    for (int ind = 0; ind < w.edgesFrom[i].Count; ind++)
+                    {
+                        var edge = w.edgesFrom[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            fixed_edges[edge.Id] = 1;
+                            vertices.Push(edge.to);
+                        }
+                    }
+
+                    for (int ind = 0; ind < w.edgesTo[i].Count; ind++)
+                    {
+                        var edge = w.edgesTo[i][ind];
+                        if (fixed_edges[edge.Id] == 0)
+                        {
+                            fixed_edges[edge.Id] = 1;
+                             vertices.Push(edge.from);
+                        }
+                    }
+                  
+                }
+
+            }
         }
 
 
 
-        private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e)
+        private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e, int dontCheck = -1)
         {
+
+             Chain_Edge_Fixing_UnDirectedNoRecursion(z, w, e);
+             return;
+
             if (conf.noChainFix)
                 return;
 
             int i = e.from;
             int j = e.to;
-
-            Chain_For_vertex(z, w, i);
-            Chain_For_vertex(z, w, j);
+            if (dontCheck != i)
+                Chain_For_vertex(z, w, i);
+            if (dontCheck != j)
+                Chain_For_vertex(z, w, j);
 
         }
 
@@ -591,7 +707,7 @@ namespace GraphDecomposer.LocalSearch
                 if (fixed_edges[edge.Id] != 0)
                     cntFixed++;
 
-            if (cntFixed >= 2 && cntFixed<4)
+            if (cntFixed == 2)
             {
                 for (int ind = 0; ind < w.edgesFrom[i].Count; ind++)
                 {
@@ -599,7 +715,7 @@ namespace GraphDecomposer.LocalSearch
                     if (fixed_edges[edge.Id] == 0)
                     {
                         MoveEdge(w, z, edge);
-                        Chain_Edge_Fixing_UnDirected(w, z, edge);
+                        Chain_Edge_Fixing_UnDirected(w, z, edge, i);
                     }
                 }
 
@@ -609,7 +725,7 @@ namespace GraphDecomposer.LocalSearch
                     if (fixed_edges[edge.Id] == 0)
                     {
                         MoveEdge(w, z, edge);
-                        Chain_Edge_Fixing_UnDirected(w, z, edge);
+                        Chain_Edge_Fixing_UnDirected(w, z, edge, i);
                     }
                 }
 
@@ -618,7 +734,8 @@ namespace GraphDecomposer.LocalSearch
                     var edge = z.edgesFrom[i][ind];
                     if (fixed_edges[edge.Id] == 0)
                     {
-                        Chain_Edge_Fixing_UnDirected(w, z, edge);
+                        fixed_edges[edge.Id] = 1;
+                        Chain_Edge_Fixing_UnDirected(w, z, edge, i);
                     }
                 }
 
@@ -627,7 +744,8 @@ namespace GraphDecomposer.LocalSearch
                     var edge = z.edgesTo[i][ind];
                     if (fixed_edges[edge.Id] == 0)
                     {
-                        Chain_Edge_Fixing_UnDirected(w, z, edge);
+                        fixed_edges[edge.Id] = 1;
+                        Chain_Edge_Fixing_UnDirected(w, z, edge, i);
                     }
                 }
 

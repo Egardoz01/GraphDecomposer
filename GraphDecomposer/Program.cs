@@ -18,8 +18,8 @@ namespace GraphDecomposer
 
             // TestDFDOptimized12();
             //TestDFDOptimized13NoChainFix();
-            //TestDFDOptimized13();
-            TestDFDOptimized1();
+            TestDFDOptimized13();
+            //TestDFDOptimized1();
             //TestDFDOptimized2();
             // TestDFDOptimized23();
             // TestDFD();
