@@ -3,9 +3,9 @@
     {
       "model": "dfd+ls",
       "directed": false,
-      "nVertices": 512,
+      "nVertices": 128,
       "nTests": 100,
-      "testFile": "InputData\\test512p.txt"
+      "testFile": "InputData\\test128.txt"
     },
     /*{
       "model": "dfd+ls",
