@@ -301,7 +301,7 @@ namespace GraphDecomposer.LocalSearch
 
         private bool TryToFixRecursive(int depth)
         {
-            if (depth >= 8)
+            if (depth >= conf.recursionDepth)
                 return false;
 
 
@@ -679,8 +679,8 @@ namespace GraphDecomposer.LocalSearch
         private void Chain_Edge_Fixing_UnDirected(Graph z, Graph w, Edge e, int dontCheck = -1)
         {
 
-             Chain_Edge_Fixing_UnDirectedNoRecursion(z, w, e);
-             return;
+            // Chain_Edge_Fixing_UnDirectedNoRecursion(z, w, e);
+            // return;
 
             if (conf.noChainFix)
                 return;
@@ -728,6 +728,7 @@ namespace GraphDecomposer.LocalSearch
                         Chain_Edge_Fixing_UnDirected(w, z, edge, i);
                     }
                 }
+
 
                 for (int ind = 0; ind < z.edgesFrom[i].Count; ind++)
                 {
@@ -822,7 +823,7 @@ namespace GraphDecomposer.LocalSearch
                 MoveEdge(z, w, e);
                 Chain_Edge_Fixing_UnDirected(z, w, e);
 
-                int br = brokenVerticses.Count;
+                //int br = brokenVerticses.Count;
                 bool res = TryToFixRecursive(0);
 
                 if (res)

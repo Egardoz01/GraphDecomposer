@@ -291,6 +291,10 @@ namespace GraphDecomposer
 
         public bool CheckEqualCicle(Graph other)
         {
+            if (!this.directed)
+            {
+                return CheckGrahphsAreTheSameUndirected(other);
+            }
             var s1 = this.FindCycle();
             var s2 = other.FindCycle();
 
@@ -303,6 +307,45 @@ namespace GraphDecomposer
 
             return false;
         }
+
+        private List<int> getIncidentVerticesWithI(int i)
+        {
+            List<int> l = new List<int>();
+
+            foreach (var e in edgesFrom[i])
+                l.Add(e.to);
+
+            foreach (var e in edgesTo[i])
+                l.Add(e.from);
+
+            l.Sort();
+            return l;
+        }
+
+        private bool CheckGrahphsAreTheSameUndirected(Graph other)
+        {
+            for (int i = 1; i <= this.nVertices; i++)
+            {
+                var l1 = this.getIncidentVerticesWithI(i);
+                var l2 = other.getIncidentVerticesWithI(i);
+
+                if (l1.Count != 2 || l2.Count !=2)
+                {
+                    throw new Exception("Bruh");
+                }
+
+                for (int j = 0; j < l1.Count;j++)
+                {
+                    if (l1[j] != l2[j])
+                        return false;
+                }
+
+            }
+
+
+            return true;
+        }
+
 
         public List<Edge> FindDoubleEdges(Graph other)
         {

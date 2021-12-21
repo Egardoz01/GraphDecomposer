@@ -1,6 +1,7 @@
 ﻿using GraphDecomposer.DataStructures;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace GraphDecomposer.Solvers
@@ -14,12 +15,12 @@ namespace GraphDecomposer.Solvers
             directedSolver = new SolverMTZ_Directed();
             undirectedSolver = new SolverMTZ_UnDirected();
         }
-        public SolverResult SolveTest(TestInput input, TestConfiguration conf)
+        public SolverResult SolveTest(TestInput input, TestConfiguration conf, Stopwatch timer)
         {
             if (conf.directed)
-                return directedSolver.SolveTest(input, conf);
+                return directedSolver.SolveTest(input, conf, timer);
             else
-                return undirectedSolver.SolveTest(input, conf);
+                return undirectedSolver.SolveTest(input, conf, timer);
         }
     }
 }

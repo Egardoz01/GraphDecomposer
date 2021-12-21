@@ -17,13 +17,15 @@ namespace GraphDecomposer
             //DoConfigurationTesting();
 
             // TestDFDOptimized12();
-            //TestDFDOptimized13NoChainFix();
-            TestDFDOptimized13();
-            TestDFDOptimized1();
-            TestDFDOptimized2();
-            // TestDFDOptimized23();
-            // TestDFD();
-            //TestMTZ();
+            //var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            var conf = ConfigurationParser.GetAllTestsConfiguration();
+
+            // TestDFDOptimized1(conf);
+            // TestDFDOptimized13(conf);
+           // TestDFDOptimized13NoChainFix(conf);
+
+            TestDFD(conf);
+            TestMTZ(conf);
         }
 
 
@@ -137,9 +139,8 @@ namespace GraphDecomposer
 
 
 
-        static void TestDFDOptimized1()
+        static void TestDFDOptimized1(List<TestConfiguration> conf)
         {
-            var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFDOptimized solver = new SolverDFDOptimized();
 
             for (int i = 0; i < conf.Count; i++)
@@ -147,19 +148,20 @@ namespace GraphDecomposer
                 var test = conf[i];
                 test.firstNeighbourhood = true;
                 test.model = "dfd+ls 1";
-                DoTest(solver, test);
+                if (test.nVertices > 3000)
+                    DoTest(solver, test);
             }
         }
 
 
-        static void TestDFDOptimized13()
+        static void TestDFDOptimized13(List<TestConfiguration> conf)
         {
-            var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFDOptimized solver = new SolverDFDOptimized();
 
             for (int i = 0; i < conf.Count; i++)
             {
                 var test = conf[i];
+                test.recursionDepth = 7;
                 test.firstNeighbourhood = true;
                 test.thirdNeighbourhood = true;
                 test.model = "dfd+ls 1 3";
@@ -167,14 +169,17 @@ namespace GraphDecomposer
             }
         }
 
-        static void TestDFDOptimized13NoChainFix()
+        static void TestDFDOptimized13NoChainFix(List<TestConfiguration> conf)
         {
-            var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFDOptimized solver = new SolverDFDOptimized();
 
             for (int i = 0; i < conf.Count; i++)
             {
+
                 var test = conf[i];
+                if (test.nVertices < 1500)
+                    continue;
+                test.recursionDepth = 7;
                 test.firstNeighbourhood = true;
                 test.thirdNeighbourhood = true;
                 test.noChainFix = true;
@@ -230,21 +235,19 @@ namespace GraphDecomposer
             }
         }
 
-        static void TestDFD()
+        static void TestDFD(List<TestConfiguration> conf)
         {
-            var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFD solver = new SolverDFD();
             for (int i = 0; i < conf.Count; i++)
             {
                 var test = conf[i];
-                test.model = "dfd";
+                test.model = "dfj";
                 DoTest(solver, test);
             }
         }
 
-        static void TestMTZ()
+        static void TestMTZ(List<TestConfiguration> conf)
         {
-            var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverMTZ solver = new SolverMTZ();
             for (int i = 0; i < conf.Count; i++)
             {
@@ -260,16 +263,20 @@ namespace GraphDecomposer
             InputParser input = new InputParser(conf.testFile, conf.nTests, conf.directed);
 
             ResultAnalyses results = new ResultAnalyses(conf);
-
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
             int cnt = 1;
             foreach (var p in input)
             {
+                double totalHours = timer.ElapsedMilliseconds / (1000 * 60 * 60);
+                if (totalHours >= 2)
+                    break;
                 Console.WriteLine("#running test " + cnt++);
 
                 Stopwatch timeTracker = new Stopwatch();
                 timeTracker.Start();
 
-                var res = solver.SolveTest(p, conf);
+                var res = solver.SolveTest(p, conf, timer);
                 timeTracker.Stop();
 
                 res.millisecondsElapsed = timeTracker.ElapsedMilliseconds;

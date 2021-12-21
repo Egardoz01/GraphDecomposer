@@ -61,7 +61,10 @@ namespace GraphDecomposer.LocalSearch
 
         protected bool checkOriginalCicles()
         {
-            return !(z.CheckEqualCicle(OriginalW) || z.CheckEqualCicle(OriginalZ) || w.CheckEqualCicle(OriginalZ) || w.CheckEqualCicle(OriginalW));
+            return !z.CheckEqualCicle(OriginalW) && !z.CheckEqualCicle(OriginalZ);
+
+            //return !z.CheckGrahphsAreTheSameUndirected(OriginalW) && !z.CheckGrahphsAreTheSameUndirected(OriginalZ);
+
         }
 
         public abstract bool DoLocalSearch();

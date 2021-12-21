@@ -3,6 +3,7 @@ using GraphDecomposer.Solvers;
 using Gurobi;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace GraphDecomposer
@@ -16,7 +17,7 @@ namespace GraphDecomposer
         protected TestConfiguration conf;
         protected TestInput testInput;
         int ciclesCnt = 0;
-
+        protected Stopwatch timer;
         public SolverDFD()
         {
 
@@ -27,11 +28,11 @@ namespace GraphDecomposer
         }
 
 
-        public SolverResult SolveTest(TestInput input, TestConfiguration conf)
+        public SolverResult SolveTest(TestInput input, TestConfiguration conf, Stopwatch timer)
         {
             testInput = input;
             this.conf = conf;
-
+            this.timer = timer;
             ciclesCnt = 0;
 
             model = new GRBModel(env);
@@ -60,12 +61,16 @@ namespace GraphDecomposer
             int iterationsCnt = 0;
             while (true)
             {
+
+          
+
                 iterationsCnt++;
 
                 model.Optimize();
 
+                double totalHours = timer.ElapsedMilliseconds / (1000 * 60 * 60);
                 bool hasSol = model.SolCount > 0;
-                if (!hasSol)
+                if (!hasSol || totalHours >= 2)
                     return new SolverResult(iterationsCnt, false, null, null);// no solution
 
 

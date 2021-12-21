@@ -16,7 +16,7 @@ namespace GraphDecomposer.Results
         static ResultAnalyses()
         {
             outputFile = "results\\result_" + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss") + ".csv";
-            string title = "Model;Test file;Graph type;Vertex amount;F count;F M(time);F Sd(time);F M(iterations);F Sd(iterations);Inf Tests count;Inf M(time);Inf Sd(time);Inf M(iterations);Inf Sd(iterations)";
+            string title = "Model;Test file;Tests passed;Graph type;Vertex amount;F count;F M(time);F Sd(time);F M(iterations);F Sd(iterations);Inf Tests count;Inf M(time);Inf Sd(time);Inf M(iterations);Inf Sd(iterations)";
             File.WriteAllText(outputFile, title);
 
         }
@@ -68,7 +68,8 @@ namespace GraphDecomposer.Results
             lines.Add((conf.directed ? "directed" : "undirected") + " graph");
             lines.Add($"Vertex amount {conf.nVertices}");
             lines.Add($"Tests amount {conf.nTests}");
-            lines.Add($"Average Double Edges Amount { doubleEdgesCnt / conf.nTests }");
+            lines.Add($"Tests passed { solverResults.Count}");
+            lines.Add($"Average Double Edges Amount { (solverResults.Count > 0 ? doubleEdgesCnt / solverResults.Count : '0' )}");
             lines.Add($"M(gorubi working time) { countM(gurubiTime)}");
             lines.Add($"Sd(gurubi working time) { countSd(gurubiTime)}");
             lines.Add($"M(local search working time) { countM(localSearchTime)}");
@@ -76,6 +77,7 @@ namespace GraphDecomposer.Results
 
             linesCSV.Add(conf.model);
             linesCSV.Add(Path.GetFileName(conf.testFile));
+            linesCSV.Add(solvedIterations.Count.ToString());
             linesCSV.Add((conf.directed ? "directed" : "undirected"));
             linesCSV.Add(conf.nVertices.ToString());
 
@@ -119,17 +121,22 @@ namespace GraphDecomposer.Results
             }
 
             File.AppendAllLines("results.txt", lines);
-            File.AppendAllText(outputFile,"\n"+ String.Join(';', linesCSV.ToArray()));
+            File.AppendAllText(outputFile, "\n" + String.Join(';', linesCSV.ToArray()));
         }
 
 
         private double countM(List<double> v)
         {
+            if (v.Count == 0)
+                return 0;
             return v.Sum() / v.Count;
         }
 
         private double countSd(List<double> v)
         {
+            if (v.Count == 0)
+                return 0;
+
             double M = countM(v);
 
             return Math.Sqrt(v.Select(x => (x - M) * (x - M)).Sum() / v.Count);

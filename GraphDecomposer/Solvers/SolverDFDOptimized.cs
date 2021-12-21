@@ -35,9 +35,9 @@ namespace GraphDecomposer.Solvers
                 model.Optimize();
                 gurubiTimer.Stop();
 
-
+                double totalHours = timer.ElapsedMilliseconds / (1000 * 60 * 60);
                 bool hasSol = model.SolCount > 0;
-                if (!hasSol)
+                if (!hasSol || totalHours>=2)
                     return new SolverResult(iterationsCnt, false, null, null);// no solution
 
 

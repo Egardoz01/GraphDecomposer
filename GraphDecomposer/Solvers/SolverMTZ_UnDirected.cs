@@ -2,6 +2,7 @@
 using Gurobi;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace GraphDecomposer.Solvers
@@ -19,6 +20,7 @@ namespace GraphDecomposer.Solvers
         private List<GRBVar> alphaVars;
         private List<GRBVar> betaVars;
         int ciclesCnt = 0;
+        private Stopwatch timer;
         public SolverMTZ_UnDirected()
         {
             env = new GRBEnv(true);
@@ -27,10 +29,10 @@ namespace GraphDecomposer.Solvers
             env.Start();
         }
 
-        public SolverResult SolveTest(TestInput input, TestConfiguration conf)
+        public SolverResult SolveTest(TestInput input, TestConfiguration conf, Stopwatch timer)
         {
             this.conf = conf;
-
+            this.timer = timer;
             ciclesCnt = 0;
 
             model = new GRBModel(env);
