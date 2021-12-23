@@ -17,15 +17,18 @@ namespace GraphDecomposer
             //DoConfigurationTesting();
 
             // TestDFDOptimized12();
-            //var conf = ConfigurationParser.GetConfiguration("configuration.json");
-            var conf = ConfigurationParser.GetAllTestsConfiguration();
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            //var conf = ConfigurationParser.GetAllTestsConfiguration();
 
-            // TestDFDOptimized1(conf);
-            // TestDFDOptimized13(conf);
-           // TestDFDOptimized13NoChainFix(conf);
+            // TestDFDOptimized3();
+            TestDFDOptimized1(conf);
+            TestDFDOptimized13_1(conf);
+            TestDFDOptimized13_2(conf);
+            TestDFDOptimized13_3(conf);
+            // TestDFDOptimized13NoChainFix(conf);
 
-            TestDFD(conf);
-            TestMTZ(conf);
+            //TestDFD(conf);
+            // TestMTZ(conf);
         }
 
 
@@ -148,13 +151,12 @@ namespace GraphDecomposer
                 var test = conf[i];
                 test.firstNeighbourhood = true;
                 test.model = "dfd+ls 1";
-                if (test.nVertices > 3000)
-                    DoTest(solver, test);
+                DoTest(solver, test);
             }
         }
 
 
-        static void TestDFDOptimized13(List<TestConfiguration> conf)
+        static void TestDFDOptimized13_1(List<TestConfiguration> conf)
         {
             SolverDFDOptimized solver = new SolverDFDOptimized();
 
@@ -162,9 +164,42 @@ namespace GraphDecomposer
             {
                 var test = conf[i];
                 test.recursionDepth = 7;
+                test.thirdNeighborhoodType = 1;
                 test.firstNeighbourhood = true;
                 test.thirdNeighbourhood = true;
-                test.model = "dfd+ls 1 3";
+                test.model = "dfd+ls 1 3_1";
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized13_2(List<TestConfiguration> conf)
+        {
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.recursionDepth = 5;
+                test.thirdNeighborhoodType = 2;
+                test.firstNeighbourhood = true;
+                test.thirdNeighbourhood = true;
+                test.model = "dfd+ls 1 3_2";
+                DoTest(solver, test);
+            }
+        }
+
+        static void TestDFDOptimized13_3(List<TestConfiguration> conf)
+        {
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.recursionDepth = 7;
+                test.thirdNeighborhoodType = 3;
+                test.firstNeighbourhood = true;
+                test.thirdNeighbourhood = true;
+                test.model = "dfd+ls 1 3_3";
                 DoTest(solver, test);
             }
         }
@@ -220,6 +255,22 @@ namespace GraphDecomposer
             }
         }
 
+
+        static void TestDFDOptimized3()
+        {
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.thirdNeighbourhood = true;
+                test.recursionDepth = 7;
+                test.model = "dfd+ls 3";
+                DoTest(solver, test);
+            }
+        }
+
         static void TestDFDOptimized23()
         {
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
@@ -238,9 +289,18 @@ namespace GraphDecomposer
         static void TestDFD(List<TestConfiguration> conf)
         {
             SolverDFD solver = new SolverDFD();
+            bool b = false;
             for (int i = 0; i < conf.Count; i++)
             {
+
                 var test = conf[i];
+                if (test.testFile == "allTests\\test256bi.txt")
+                {
+                    b = true;
+                    continue;
+                }
+                if (b == false)
+                    continue;
                 test.model = "dfj";
                 DoTest(solver, test);
             }

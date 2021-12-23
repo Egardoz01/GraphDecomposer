@@ -299,8 +299,30 @@ namespace GraphDecomposer.LocalSearch
         }
 
 
-        private bool TryToFixRecursive(int depth)
+        private bool TryToFixRecursive_AllVerts_RandomEdge(int depth)
         {
+            if (brokenVerticses.Count == 0)
+            {
+                if (z.nEdges != w.nEdges)
+                {
+                    throw new Exception("Bruh");
+                }
+
+                var a = z.findSubCicles();
+                var b = w.findSubCicles();
+                if (a.Count + b.Count < before)
+                {
+                    if (a.Count + b.Count != 0 || checkOriginalCicles())
+                    {
+                        z.RestoreEdges();
+                        w.RestoreEdges();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             if (depth >= conf.recursionDepth)
                 return false;
 
@@ -327,59 +349,145 @@ namespace GraphDecomposer.LocalSearch
 
             foreach (var vertex in curBroken)
             {
+                if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count <= 1)
+                {
+                    var edges = new List<Edge>();
+
+                    foreach (var edge in w.edgesFrom[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
+                    foreach (var edge in w.edgesTo[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
+
+
+
+                    var ed = ArrayUtils.GetRandomElement(edges);
+                    MoveEdge(w, z, ed);
+                    Chain_Edge_Fixing_UnDirected(w, z, ed);
+
+                    bool bResult = TryToFixRecursive_AllVerts_RandomEdge(depth + 1);
+
+                    if (bResult)
+                        return true;
+
+                    UnmoveLstMoved(restZ, restW);
+
+                }
+
+                if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count >= 3)
+                {
+                    var edges = new List<Edge>();
+
+                    foreach (var edge in z.edgesFrom[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
+                    foreach (var edge in z.edgesTo[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
+
+
+
+
+                    var ed = ArrayUtils.GetRandomElement(edges);
+                    MoveEdge(z, w, ed);
+                    Chain_Edge_Fixing_UnDirected(z, w, ed);
+
+                    bool bResult = TryToFixRecursive_AllVerts_RandomEdge(depth + 1);
+
+                    if (bResult)
+                        return true;
+
+                    UnmoveLstMoved(restZ, restW);
+
+
+                }
+
+
+            }
+
+            return false;
+        }
+
+
+        private bool TryToFixRecursive2_AllVerts_AllEdges(int depth)
+        {
+            if (depth >= conf.recursionDepth)
+                return false;
+
+            if (brokenVerticses.Count == 1)
+            {
+                /*List<int> reallyBroken = new List<int>();
+                for (int i = 1; i <= z.nVertices; i++)
+                {
+                    if (z.edgesFrom[i].Count + z.edgesTo[i].Count != 2)
+                    {
+                        reallyBroken.Add(i);
+                    }
+                }*/
+
+                if (!conf.noChainFix)
+                    throw new Exception("Bruh");
+            }
+
+            var curBroken = new List<int>(brokenVerticses);
+
+            int restZ = movedFromZ.Count;
+            int restW = movedFromW.Count;
+
+            foreach (var vertex in curBroken)
+            {
+
 
                 if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count <= 1)
                 {
                     var edges = new List<Edge>();
 
-                    foreach (var x in brokenVerticses)
-                    {
-                        if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count <= 1)
-                        {
-                            foreach (var edge in w.edgesFrom[vertex])
-                                if (fixed_edges[edge.Id] == 0 && edge.to == x)
-                                    edges.Add(edge);
-                            foreach (var edge in w.edgesTo[vertex])
-                                if (fixed_edges[edge.Id] == 0 && edge.from == x)
-                                    edges.Add(edge);
-                        }
-                    }
+                    foreach (var edge in w.edgesFrom[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
+                    foreach (var edge in w.edgesTo[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
 
-                    if (edges.Count == 0)
-                    {
-                        foreach (var x in brokenVerticses)
-                        {
-                            if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count >= 3)
-                            {
-                                foreach (var edge in w.edgesFrom[vertex])
-                                    if (fixed_edges[edge.Id] == 0 && edge.to == x)
-                                        edges.Add(edge);
-                                foreach (var edge in w.edgesTo[vertex])
-                                    if (fixed_edges[edge.Id] == 0 && edge.from == x)
-                                        edges.Add(edge);
-                            }
-                        }
-                    }
 
-                    if (edges.Count == 0)
+                    for (int i = 0; i < edges.Count; i++)
                     {
-                        foreach (var edge in w.edgesFrom[vertex])
-                            if (fixed_edges[edge.Id] == 0)
-                                edges.Add(edge);
-                        foreach (var edge in w.edgesTo[vertex])
-                            if (fixed_edges[edge.Id] == 0)
-                                edges.Add(edge);
-                    }
-
-                    if (edges.Count != 0)
-                    {
-                        var ed = ArrayUtils.GetRandomElement(edges);
+                        var ed = edges[i];
                         MoveEdge(w, z, ed);
                         Chain_Edge_Fixing_UnDirected(w, z, ed);
-                    }
-                    else
-                    {
-                        break;
+
+                        if (brokenVerticses.Count == 0)
+                        {
+                            if (z.nEdges != w.nEdges)
+                            {
+                                throw new Exception("Bruh");
+                            }
+
+                            var a = z.findSubCicles();
+                            var b = w.findSubCicles();
+                            if (a.Count + b.Count < before)
+                            {
+                                if (a.Count + b.Count != 0 || checkOriginalCicles())
+                                {
+                                    z.RestoreEdges();
+                                    w.RestoreEdges();
+                                    return true;
+                                }
+                            }
+
+                            return false;
+                        }
+
+                        bool bResult = TryToFixRecursive2_AllVerts_AllEdges(depth + 1);
+
+
+
+
+                        if (bResult)
+                            return true;
+
+                        UnmoveLstMoved(restZ, restW);
                     }
                 }
 
@@ -387,82 +495,162 @@ namespace GraphDecomposer.LocalSearch
                 {
                     var edges = new List<Edge>();
 
-                    foreach (var x in brokenVerticses)
+                    foreach (var edge in z.edgesFrom[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
+                    foreach (var edge in z.edgesTo[vertex])
+                        if (fixed_edges[edge.Id] == 0)
+                            edges.Add(edge);
+
+
+
+                    for (int i = 0; i < edges.Count; i++)
                     {
-                        if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count >= 3)
-                        {
-                            foreach (var edge in z.edgesFrom[vertex])
-                                if (fixed_edges[edge.Id] == 0 && edge.to == x)
-                                    edges.Add(edge);
-                            foreach (var edge in z.edgesTo[vertex])
-                                if (fixed_edges[edge.Id] == 0 && edge.from == x)
-                                    edges.Add(edge);
-                        }
-                    }
-
-
-                    if (edges.Count == 0)
-                    {
-                        foreach (var x in brokenVerticses)
-                        {
-                            if (x != vertex && z.edgesFrom[x].Count + z.edgesTo[x].Count <= 1)
-                            {
-                                foreach (var edge in z.edgesFrom[vertex])
-                                    if (fixed_edges[edge.Id] == 0 && edge.to == x)
-                                        edges.Add(edge);
-                                foreach (var edge in z.edgesTo[vertex])
-                                    if (fixed_edges[edge.Id] == 0 && edge.from == x)
-                                        edges.Add(edge);
-                            }
-                        }
-                    }
-
-
-                    if (edges.Count == 0)
-                    {
-                        foreach (var edge in z.edgesFrom[vertex])
-                            if (fixed_edges[edge.Id] == 0)
-                                edges.Add(edge);
-                        foreach (var edge in z.edgesTo[vertex])
-                            if (fixed_edges[edge.Id] == 0)
-                                edges.Add(edge);
-                    }
-
-                    if (edges.Count != 0)
-                    {
-                        var ed = ArrayUtils.GetRandomElement(edges);
+                        var ed = edges[i];
                         MoveEdge(z, w, ed);
                         Chain_Edge_Fixing_UnDirected(z, w, ed);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
 
-                if (brokenVerticses.Count == 0)
-                {
-                    if (z.nEdges != w.nEdges)
-                    {
-                        throw new Exception("Bruh");
-                    }
-
-                    var a = z.findSubCicles();
-                    var b = w.findSubCicles();
-                    if (a.Count + b.Count < before)
-                    {
-                        if (a.Count + b.Count != 0 || checkOriginalCicles())
+                        if (brokenVerticses.Count == 0)
                         {
-                            z.RestoreEdges();
-                            w.RestoreEdges();
-                            return true;
+                            if (z.nEdges != w.nEdges)
+                            {
+                                throw new Exception("Bruh");
+                            }
+
+                            var a = z.findSubCicles();
+                            var b = w.findSubCicles();
+                            if (a.Count + b.Count < before)
+                            {
+                                if (a.Count + b.Count != 0 || checkOriginalCicles())
+                                {
+                                    z.RestoreEdges();
+                                    w.RestoreEdges();
+                                    return true;
+                                }
+                            }
+
+                            return false;
                         }
+
+
+                        bool bResult = TryToFixRecursive2_AllVerts_AllEdges(depth + 1);
+
+                        if (bResult)
+                            return true;
+
+                        UnmoveLstMoved(restZ, restW);
                     }
 
-                    return false;
                 }
 
-                bool bResult = TryToFixRecursive(depth + 1);
+
+            }
+
+            return false;
+        }
+
+
+
+        private bool TryToFixRecursive3_RandomVert_AllEdges(int depth)
+        {
+            if (brokenVerticses.Count == 0)
+            {
+                if (z.nEdges != w.nEdges)
+                {
+                    throw new Exception("Bruh");
+                }
+
+                var a = z.findSubCicles();
+                var b = w.findSubCicles();
+                if (a.Count + b.Count < before)
+                {
+                    if (a.Count + b.Count != 0 || checkOriginalCicles())
+                    {
+                        z.RestoreEdges();
+                        w.RestoreEdges();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+
+            if (depth >= conf.recursionDepth)
+                return false;
+
+            // if (brokenVerticses.Count == 0)
+            //  return true;
+
+            if (brokenVerticses.Count == 1)
+            {
+                /*List<int> reallyBroken = new List<int>();
+                for (int i = 1; i <= z.nVertices; i++)
+                {
+                    if (z.edgesFrom[i].Count + z.edgesTo[i].Count != 2)
+                    {
+                        reallyBroken.Add(i);
+                    }
+                }*/
+
+                if (!conf.noChainFix)
+                    throw new Exception("Bruh");
+            }
+
+            int restZ = movedFromZ.Count;
+            int restW = movedFromW.Count;
+
+            var edgesFromW = new List<Edge>();
+            var edgesFromZ = new List<Edge>();
+
+
+            var vertex = ArrayUtils.GetRandomElement(brokenVerticses);
+
+            if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count <= 1)
+            {
+
+                foreach (var edge in w.edgesFrom[vertex])
+                    if (fixed_edges[edge.Id] == 0)
+                        edgesFromW.Add(edge);
+                foreach (var edge in w.edgesTo[vertex])
+                    if (fixed_edges[edge.Id] == 0)
+                        edgesFromW.Add(edge);
+            }
+
+            if (z.edgesFrom[vertex].Count + z.edgesTo[vertex].Count >= 3)
+            {
+
+                foreach (var edge in z.edgesFrom[vertex])
+                    if (fixed_edges[edge.Id] == 0)
+                        edgesFromZ.Add(edge);
+                foreach (var edge in z.edgesTo[vertex])
+                    if (fixed_edges[edge.Id] == 0)
+                        edgesFromZ.Add(edge);
+            }
+
+
+            for (int i = 0; i < edgesFromW.Count; i++)
+            {
+                var ed = edgesFromW[i];
+                MoveEdge(w, z, ed);
+                Chain_Edge_Fixing_UnDirected(w, z, ed);
+
+                bool bResult = TryToFixRecursive3_RandomVert_AllEdges(depth + 1);
+
+                if (bResult)
+                    return true;
+
+                UnmoveLstMoved(restZ, restW);
+            }
+
+            for (int i = 0; i < edgesFromZ.Count; i++)
+            {
+                var ed = edgesFromZ[i];
+                MoveEdge(z, w, ed);
+                Chain_Edge_Fixing_UnDirected(z, w, ed);
+
+
+                bool bResult = TryToFixRecursive3_RandomVert_AllEdges(depth + 1);
 
                 if (bResult)
                     return true;
@@ -472,6 +660,7 @@ namespace GraphDecomposer.LocalSearch
 
             return false;
         }
+
 
         private void UnmoveLstMoved(int restZ, int restW)
         {
@@ -595,7 +784,7 @@ namespace GraphDecomposer.LocalSearch
                     }
 
 
-                   for (int ind = 0; ind < z.edgesFrom[i].Count; ind++)
+                    for (int ind = 0; ind < z.edgesFrom[i].Count; ind++)
                     {
                         var edge = z.edgesFrom[i][ind];
                         if (fixed_edges[edge.Id] == 0)
@@ -614,7 +803,7 @@ namespace GraphDecomposer.LocalSearch
                             vertices.Push(edge.from);
                         }
                     }
-               
+
                 }
 
                 cntFixed = 0;
@@ -648,7 +837,7 @@ namespace GraphDecomposer.LocalSearch
                             vertices.Push(edge.from);
                         }
                     }
-  
+
                     for (int ind = 0; ind < w.edgesFrom[i].Count; ind++)
                     {
                         var edge = w.edgesFrom[i][ind];
@@ -665,10 +854,10 @@ namespace GraphDecomposer.LocalSearch
                         if (fixed_edges[edge.Id] == 0)
                         {
                             fixed_edges[edge.Id] = 1;
-                             vertices.Push(edge.from);
+                            vertices.Push(edge.from);
                         }
                     }
-                  
+
                 }
 
             }
@@ -819,12 +1008,17 @@ namespace GraphDecomposer.LocalSearch
             for (int i = edgesToTry.Count - 1; i >= 0; i--)
             {
                 var e = edgesToTry[i];
-
                 MoveEdge(z, w, e);
                 Chain_Edge_Fixing_UnDirected(z, w, e);
 
-                //int br = brokenVerticses.Count;
-                bool res = TryToFixRecursive(0);
+                bool res = false;
+
+                if (conf.thirdNeighborhoodType == 1)
+                    res = TryToFixRecursive_AllVerts_RandomEdge(0);
+                if (conf.thirdNeighborhoodType == 2)
+                    res = TryToFixRecursive2_AllVerts_AllEdges(0);
+                if (conf.thirdNeighborhoodType == 3)
+                    res = TryToFixRecursive3_RandomVert_AllEdges(0);
 
                 if (res)
                     return true;
