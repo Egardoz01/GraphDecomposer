@@ -15,16 +15,31 @@ namespace GraphDecomposer.Parsers
             string json = File.ReadAllText(filename);
             dynamic dinamic = JObject.Parse(json);
             JArray array = dinamic["tests"];
-            var conf = array.ToObject<List<TestConfiguration>>();
+            bool directed = dinamic["directed"];
+            string model = dinamic["model"];
+            string dir = dinamic["TestsDirectory"];
 
+            List<TestConfiguration> conf;
+            if (dir == "")
+                conf = array.ToObject<List<TestConfiguration>>();
+            else
+                conf = GetAllTestsConfiguration(dir);
+
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var a = conf[i];
+                a.directed = directed;
+                a.model = model;
+                conf[i] = a;
+            }
             return conf;
         }
 
 
-        public static List<TestConfiguration> GetAllTestsConfiguration()
+        public static List<TestConfiguration> GetAllTestsConfiguration(string dir)
         {
             List<TestConfiguration> conf = new List<TestConfiguration>();
-            var files = Directory.GetFiles("allTests");
+            var files = Directory.GetFiles(dir);
             for (int i = 0; i < files.Length; i++)
             {
                 var file = files[i];
@@ -40,7 +55,7 @@ namespace GraphDecomposer.Parsers
 
             conf.Sort((a, b) =>
             {
-                return a.nVertices-b.nVertices;
+                return a.nVertices - b.nVertices;
             });
 
             return conf;

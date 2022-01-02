@@ -14,39 +14,37 @@ namespace GraphDecomposer
     {
         static void Main(string[] args)
         {
-            //DoConfigurationTesting();
-
             // TestDFDOptimized12();
-            var conf = ConfigurationParser.GetConfiguration("configuration.json");
-            //var conf = ConfigurationParser.GetAllTestsConfiguration();
-
+             var conf = ConfigurationParser.GetConfiguration("configuration.json");
+            //var conf2 = ConfigurationParser.GetAllTestsConfiguration();
+             DoConfigurationTesting(conf);
             // TestDFDOptimized3();
-            TestDFDOptimized1(conf);
-            TestDFDOptimized13_1(conf);
-            TestDFDOptimized13_2(conf);
-            TestDFDOptimized13_3(conf);
-            // TestDFDOptimized13NoChainFix(conf);
+            // TestDFDOptimized1(conf);
+            //TestDFDOptimized13_1(conf);
+            //TestDFDOptimized13_2(conf);
+            //TestDFDOptimized13_3(conf);
+            //TestDFDOptimized13NoChainFix(conf);
 
+            //TestDFD_LS_Directed(conf);
             //TestDFD(conf);
-            // TestMTZ(conf);
+            //TestMTZ(conf2);
         }
 
 
 
 
-        static void DoConfigurationTesting()
+        static void DoConfigurationTesting(List<TestConfiguration> conf)
         {
-            var conf = ConfigurationParser.GetConfiguration("configuration.json");
             SolverDFD solverDFD = new SolverDFD();
             SolverDFDOptimized solverDFD_LS = new SolverDFDOptimized();
             SolverMTZ solverMTZ = new SolverMTZ();
             foreach (var test in conf)
             {
-                if (test.model == "dfd")
+                if (test.model == "dfj")
                     DoTest(solverDFD, test);
-                else if (test.model == "dfd+ls")
+                else if (test.model == "dfj_ls")
                     DoTest(solverDFD_LS, test);
-                else
+                if (test.model == "mtz")
                     DoTest(solverMTZ, test);
             }
         }
@@ -151,7 +149,8 @@ namespace GraphDecomposer
                 var test = conf[i];
                 test.firstNeighbourhood = true;
                 test.model = "dfd+ls 1";
-                DoTest(solver, test);
+                if (test.nVertices > 3000)
+                    DoTest(solver, test);
             }
         }
 
@@ -212,14 +211,14 @@ namespace GraphDecomposer
             {
 
                 var test = conf[i];
-                if (test.nVertices < 1500)
-                    continue;
                 test.recursionDepth = 7;
                 test.firstNeighbourhood = true;
+                test.thirdNeighborhoodType = 3;
                 test.thirdNeighbourhood = true;
                 test.noChainFix = true;
-                test.model = "dfd+ls 1 3 no fix";
-                DoTest(solver, test);
+                test.model = "dfd+ls 1 3_3 no fix";
+                if (test.nVertices > 1500)
+                    DoTest(solver, test);
             }
         }
 
@@ -289,31 +288,57 @@ namespace GraphDecomposer
         static void TestDFD(List<TestConfiguration> conf)
         {
             SolverDFD solver = new SolverDFD();
-            bool b = false;
             for (int i = 0; i < conf.Count; i++)
             {
-
                 var test = conf[i];
-                if (test.testFile == "allTests\\test256bi.txt")
-                {
-                    b = true;
-                    continue;
-                }
-                if (b == false)
-                    continue;
                 test.model = "dfj";
-                DoTest(solver, test);
+                test.directed = true;
+                if (!test.testFile.Contains("bi"))
+                    DoTest(solver, test);
+            }
+        }
+
+        static void TestDFD_Directed(List<TestConfiguration> conf)
+        {
+            SolverDFD solver = new SolverDFD();
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.model = "dfj";
+                test.directed = true;
+                if (!test.testFile.Contains("bi"))
+                    DoTest(solver, test);
+            }
+        }
+
+
+        static void TestDFD_LS_Directed(List<TestConfiguration> conf)
+        {
+            SolverDFDOptimized solver = new SolverDFDOptimized();
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.model = "dfj+Ls";
+                test.directed = true;
+                if (!test.testFile.Contains("bi"))
+                    DoTest(solver, test);
             }
         }
 
         static void TestMTZ(List<TestConfiguration> conf)
         {
             SolverMTZ solver = new SolverMTZ();
+            bool dd = false;
             for (int i = 0; i < conf.Count; i++)
             {
                 var test = conf[i];
                 test.model = "mtz";
-                DoTest(solver, test);
+                test.directed = false;
+                if (!test.testFile.Contains("bi") && dd && test.testFile.Contains("4peaks"))
+                    DoTest(solver, test);
+                if (test.testFile.Contains("test1024_4peaks.txt"))
+                    dd = true;
+
             }
         }
 
@@ -326,8 +351,12 @@ namespace GraphDecomposer
             Stopwatch timer = new Stopwatch();
             timer.Start();
             int cnt = 1;
+            Console.WriteLine(conf.testFile);
             foreach (var p in input)
             {
+
+
+
                 double totalHours = timer.ElapsedMilliseconds / (1000 * 60 * 60);
                 if (totalHours >= 2)
                     break;
@@ -345,19 +374,7 @@ namespace GraphDecomposer
                 res.InitialW = p.y;
                 results.addResult(res);
 
-                /*  if (res.solutionExistance)
-                  {
-                      Console.WriteLine("                     Initial Cicle 1:" + String.Join(',', p.x.FindCycle()));
-                      Console.WriteLine("                     Initial Cicle 2:" + String.Join(',', p.y.FindCycle()));
 
-                      Console.WriteLine("                     Result Cicle 1:" + String.Join(',', res.z.FindCycle()));
-                      Console.WriteLine("                     Result Cicle 2:" + String.Join(',', res.w.FindCycle()));
-                  }
-                  else
-                  {
-                      Console.WriteLine("No solution");
-                  }
-                */
             }
 
             results.printResults();

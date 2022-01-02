@@ -11,6 +11,7 @@ namespace GraphDecomposer.DataStructures
         public long millisecondsElapsed;
         public long millisecondsGorubi;
         public long millisecondsLinearSearch;
+        public bool TimeLimit;
         public Graph z, w;
         public Graph InitialZ, InitialW;
         public SolverResult(int iterCnt, bool solution, Graph z, Graph w)
@@ -24,6 +25,7 @@ namespace GraphDecomposer.DataStructures
             this.w = w;
             InitialW = null;
             InitialZ = null;
+            TimeLimit = false;
         }
 
         public SolverResult(int iterCnt, bool solution, Graph z, Graph w, long millisecondsGorubi, long millisecondsLinearSearch)
@@ -37,6 +39,7 @@ namespace GraphDecomposer.DataStructures
             this.w = w;
             InitialW = null;
             InitialZ = null;
+            TimeLimit = false;
         }
     }
 }

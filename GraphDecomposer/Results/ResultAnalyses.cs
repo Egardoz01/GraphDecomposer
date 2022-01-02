@@ -16,7 +16,7 @@ namespace GraphDecomposer.Results
         static ResultAnalyses()
         {
             outputFile = "results\\result_" + DateTime.Now.ToString("yyyy'-'MM'-'dd'-'HH'-'mm'-'ss") + ".csv";
-            string title = "Model;Test file;Tests passed;Graph type;Vertex amount;F count;F M(time);F Sd(time);F M(iterations);F Sd(iterations);Inf Tests count;Inf M(time);Inf Sd(time);Inf M(iterations);Inf Sd(iterations)";
+            string title = "Model;Test file;Tests passed;Graph type;Vertex amount;F count;F M(time);F Sd(time);F M(iterations);F Sd(iterations);Inf Tests count;Inf M(time);Inf Sd(time);Inf M(iterations);Inf Sd(iterations); Time Limit Tests Count";
             File.WriteAllText(outputFile, title);
 
         }
@@ -42,6 +42,7 @@ namespace GraphDecomposer.Results
             List<double> localSearchTime = new List<double>();
 
             double doubleEdgesCnt = 0;
+            int tl_cnt = 0;
             foreach (var res in solverResults)
             {
                 if (res.solutionExistance)
@@ -51,8 +52,13 @@ namespace GraphDecomposer.Results
                 }
                 else
                 {
-                    unsolvedTime.Add(res.millisecondsElapsed / 1000.0);
-                    unsolvedIterations.Add(res.iterationsCnt);
+                    if (res.TimeLimit == true)
+                        tl_cnt++;
+                    else
+                    {
+                        unsolvedTime.Add(res.millisecondsElapsed / 1000.0);
+                        unsolvedIterations.Add(res.iterationsCnt);
+                    }
                 }
 
                 doubleEdgesCnt += res.InitialZ.FindDoubleEdges(res.InitialW).Count;
@@ -74,6 +80,7 @@ namespace GraphDecomposer.Results
             lines.Add($"Sd(gurubi working time) { countSd(gurubiTime)}");
             lines.Add($"M(local search working time) { countM(localSearchTime)}");
             lines.Add($"Sd(local search working time) { countSd(localSearchTime)}");
+            lines.Add($"Time Limit tests: {tl_cnt}");
 
             linesCSV.Add(conf.model);
             linesCSV.Add(Path.GetFileName(conf.testFile));
@@ -97,6 +104,14 @@ namespace GraphDecomposer.Results
                 linesCSV.Add(countM(solvedIterations).ToString());
                 linesCSV.Add(countSd(solvedIterations).ToString());
             }
+            else
+            {
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+            }
             if (unsolvedTime.Count > 0)
             {
                 lines.Add($"Infeasible Tests count: {unsolvedTime.Count}");
@@ -111,6 +126,16 @@ namespace GraphDecomposer.Results
                 linesCSV.Add(countM(unsolvedIterations).ToString());
                 linesCSV.Add(countSd(unsolvedIterations).ToString());
             }
+            else
+            {
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+                linesCSV.Add(" ");
+            }
+
+            linesCSV.Add(tl_cnt.ToString());
 
             lines.Add($"");
             lines.Add($"");

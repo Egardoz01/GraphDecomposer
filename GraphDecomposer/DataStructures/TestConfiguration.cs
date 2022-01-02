@@ -20,5 +20,8 @@ namespace GraphDecomposer.DataStructures
         public bool noChainFix;
         public int recursionDepth;
         public int thirdNeighborhoodType;
+
     }
+
+   
 }

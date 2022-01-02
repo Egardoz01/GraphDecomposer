@@ -61,9 +61,6 @@ namespace GraphDecomposer
             int iterationsCnt = 0;
             while (true)
             {
-
-          
-
                 iterationsCnt++;
 
                 model.Optimize();

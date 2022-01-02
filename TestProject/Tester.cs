@@ -17,12 +17,12 @@ namespace TestProject
             int cntSolvable = 0, cntUnsolvable = 0;
             foreach (var p in input)
             {
-                var res = solver.SolveTest(p, conf);
+               // var res = solver.SolveTest(p, conf);
 
-                if (res.solutionExistance)
-                    cntSolvable++;
-                else
-                    cntUnsolvable++;
+                //if (res.solutionExistance)
+               //     cntSolvable++;
+              //  else
+                //    cntUnsolvable++;
 
             }
 

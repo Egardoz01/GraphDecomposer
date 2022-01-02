@@ -49,15 +49,19 @@ namespace GraphDecomposer.Solvers
 
             addOrderConstrs();
 
+            model.Parameters.TimeLimit = 10 * 60;
             model.Optimize();
 
             SolverResult res = new SolverResult();
             res.iterationsCnt = 1;
             res.solutionExistance = model.SolCount > 0;
 
-          //  if (res.solutionExistance)
-            //    GetSolution();
-          
+
+            if (model.Status == 9)//Time_Limit
+            {
+                res.TimeLimit = true;
+            }
+
             return res;
         }
 
@@ -66,7 +70,7 @@ namespace GraphDecomposer.Solvers
         {
             Graph w = new Graph();
             w.nVertices = multiGraph.nVertices;
-            w.nEdges = multiGraph.nEdges/2;
+            w.nEdges = multiGraph.nEdges / 2;
             w.edges = new List<Edge>();
 
             Graph z = new Graph();
@@ -77,26 +81,26 @@ namespace GraphDecomposer.Solvers
             for (int i = 1; i < w_1.Count; i++)
             {
                 if (w_1[i].X == 1)
-                    w.edges.Add(new Edge(i, multiGraph.edges[i-1].from, multiGraph.edges[i-1].to, this.conf.directed));
+                    w.edges.Add(new Edge(i, multiGraph.edges[i - 1].from, multiGraph.edges[i - 1].to, this.conf.directed));
             }
 
             for (int i = 1; i < w_2.Count; i++)
             {
                 if (w_2[i].X == 1)
-                    w.edges.Add(new Edge(i,multiGraph.edges[i-1].to, multiGraph.edges[i-1].from, this.conf.directed));
+                    w.edges.Add(new Edge(i, multiGraph.edges[i - 1].to, multiGraph.edges[i - 1].from, this.conf.directed));
             }
 
 
             for (int i = 1; i < z_1.Count; i++)
             {
                 if (z_1[i].X == 1)
-                    z.edges.Add(new Edge(i, multiGraph.edges[i-1].from, multiGraph.edges[i-1].to, this.conf.directed));
+                    z.edges.Add(new Edge(i, multiGraph.edges[i - 1].from, multiGraph.edges[i - 1].to, this.conf.directed));
             }
 
             for (int i = 1; i < z_2.Count; i++)
             {
                 if (z_2[i].X == 1)
-                    z.edges.Add(new Edge(i, multiGraph.edges[i-1].to, multiGraph.edges[i-1].from, this.conf.directed));
+                    z.edges.Add(new Edge(i, multiGraph.edges[i - 1].to, multiGraph.edges[i - 1].from, this.conf.directed));
             }
 
             List<int> be = new List<int>();
@@ -112,8 +116,8 @@ namespace GraphDecomposer.Solvers
             }
 
             var res = new string[2];
-          //  res[0] = w.FindCycle();
-           // res[1] = z.FindCycle();
+            //  res[0] = w.FindCycle();
+            // res[1] = z.FindCycle();
 
             return res;
         }
@@ -193,7 +197,7 @@ namespace GraphDecomposer.Solvers
 
                 GRBLinExpr expr2 = new GRBLinExpr();
 
-                foreach( var edge in multiGraph.edgesTo[i])
+                foreach (var edge in multiGraph.edgesTo[i])
                 {
                     expr2.Add(1 * w_1[edge.Id]);
                 }
@@ -263,7 +267,7 @@ namespace GraphDecomposer.Solvers
             GRBLinExpr xz1Expr = new GRBLinExpr();
             foreach (var edge in multiGraph.xEdges)
             {
-                xz1Expr.Add( z_1[edge.Id]);
+                xz1Expr.Add(z_1[edge.Id]);
             }
             model.AddConstr(xz1Expr <= multiGraph.xEdges.Count - 1, "Xz1 Edges constr");
 
@@ -281,28 +285,28 @@ namespace GraphDecomposer.Solvers
             GRBLinExpr yw1Expr = new GRBLinExpr();
             foreach (var edge in multiGraph.yEdges)
             {
-                yw1Expr.Add( w_1[edge.Id]);
+                yw1Expr.Add(w_1[edge.Id]);
             }
             model.AddConstr(yw1Expr <= multiGraph.yEdges.Count - 1, "Yw1 Edges constr");
 
             GRBLinExpr yw2Expr = new GRBLinExpr();
             foreach (var edge in multiGraph.yEdges)
             {
-                yw2Expr.Add( w_2[edge.Id]);
+                yw2Expr.Add(w_2[edge.Id]);
             }
             model.AddConstr(yw2Expr <= multiGraph.yEdges.Count - 1, "Yw2 Edges constr");
 
             GRBLinExpr yz1Expr = new GRBLinExpr();
             foreach (var edge in multiGraph.yEdges)
             {
-                yz1Expr.Add( z_1[edge.Id]);
+                yz1Expr.Add(z_1[edge.Id]);
             }
             model.AddConstr(yz1Expr <= multiGraph.yEdges.Count - 1, "Yz1 Edges constr");
 
             GRBLinExpr yz2Expr = new GRBLinExpr();
             foreach (var edge in multiGraph.yEdges)
             {
-                yz2Expr.Add( z_2[edge.Id]);
+                yz2Expr.Add(z_2[edge.Id]);
             }
             model.AddConstr(yz2Expr <= multiGraph.yEdges.Count - 1, "Yz2 Edges constr");
         }

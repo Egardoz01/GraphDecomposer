@@ -46,12 +46,20 @@ namespace GraphDecomposer.Solvers
 
             addOrderConstrs();
 
+            model.Parameters.TimeLimit = 10 * 60;
             model.Optimize();
+
+
+
 
             SolverResult res = new SolverResult();
             res.iterationsCnt = 1;
             res.solutionExistance = model.SolCount > 0;
 
+            if (model.Status == 9)//Time_Limit
+            {
+                res.TimeLimit = true;
+            }
 
             return res;
         }
@@ -61,12 +69,12 @@ namespace GraphDecomposer.Solvers
             int n = multiGraph.nVertices;
             foreach (var edge in multiGraph.edges)
             {
-               
+
                 int i = edge.from;
                 int j = edge.to;
-                if (i< 2 || j < 2)
-                        continue;
-                model.AddConstr(alphaVars[i] - alphaVars[j] + variables[edge.Id]*n<=n-1,"constr al 1");
+                if (i < 2 || j < 2)
+                    continue;
+                model.AddConstr(alphaVars[i] - alphaVars[j] + variables[edge.Id] * n <= n - 1, "constr al 1");
 
                 model.AddConstr(bettahVars[i] - bettahVars[j] + (1 - variables[edge.Id]) * n <= n - 1, "constr al 1");
 

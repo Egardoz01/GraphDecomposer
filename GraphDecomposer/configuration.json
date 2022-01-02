@@ -1,11 +1,17 @@
 ﻿{
+  "model": "dfj_ls",
+  "directed": false,
+  "TestsDirectory": "allTests",
   "tests": [
     {
-      "model": "dfd+ls",
-      "directed": false,
-      "nVertices": 1024,
+      "nVertices": 256,
       "nTests": 100,
-      "testFile": "allTests\\test1024.txt"
+      "testFile": "allTests\\test512.txt"
+    },
+    {
+      "nVertices": 128,
+      "nTests": 100,
+      "testFile": "allTests\\test512_4peaks.txt"
     }
   ]
 }

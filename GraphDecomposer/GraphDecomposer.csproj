@@ -73,9 +73,6 @@
     <None Update="allTests\test1024.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="allTests\test1024bi.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="allTests\test1024pyr.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -95,9 +92,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="allTests\test1536.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="allTests\test1536bi.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="allTests\test1536pyr.txt">
@@ -121,9 +115,6 @@
     <None Update="allTests\test2048.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="allTests\test2048bi.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="allTests\test2048pyr.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -131,9 +122,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="allTests\test256.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="allTests\test256bi.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="allTests\test256pyr.txt">
@@ -145,9 +133,6 @@
     <None Update="allTests\test3072.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="allTests\test3072bi.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="allTests\test3072pyr.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -155,9 +140,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="allTests\test384.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="allTests\test384bi.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="allTests\test384pyr.txt">
