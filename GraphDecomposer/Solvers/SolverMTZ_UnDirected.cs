@@ -49,7 +49,11 @@ namespace GraphDecomposer.Solvers
 
             addOrderConstrs();
 
-            model.Parameters.TimeLimit = 10 * 60;
+            if (conf.SingleTestTimeout > 0)
+                model.Parameters.TimeLimit = conf.SingleTestTimeout;
+
+            model.Write("model_mtz_undirected_log.lp");
+
             model.Optimize();
 
             SolverResult res = new SolverResult();
@@ -62,62 +66,99 @@ namespace GraphDecomposer.Solvers
                 res.TimeLimit = true;
             }
 
+            if (res.solutionExistance)
+            {
+                var ans = GetSolution(input);
+                /*
+                Console.WriteLine("X: " + String.Join(",", input.x.FindCycle()));
+                Console.WriteLine("Y: " + String.Join(",", input.y.FindCycle()));
+                Console.WriteLine("W: " + ans[0]);
+                Console.WriteLine("Z: " + ans[1]);
+                */
+            }
+            
             return res;
         }
 
 
-        private string[] GetSolution()
+        private string[] GetSolution(TestInput input)
         {
-            Graph w = new Graph();
-            w.nVertices = multiGraph.nVertices;
-            w.nEdges = multiGraph.nEdges / 2;
-            w.edges = new List<Edge>();
 
-            Graph z = new Graph();
-            z.nVertices = multiGraph.nVertices;
-            z.nEdges = multiGraph.nEdges / 2;
-            z.edges = new List<Edge>();
+            var w_edges = new List<Edge>();
+
+            var z_edges = new List<Edge>();
+
+
 
             for (int i = 1; i < w_1.Count; i++)
             {
                 if (w_1[i].X == 1)
-                    w.edges.Add(new Edge(i, multiGraph.edges[i - 1].from, multiGraph.edges[i - 1].to, this.conf.directed));
+                    w_edges.Add(new Edge(i, multiGraph.edges[i - 1].from, multiGraph.edges[i - 1].to, this.conf.directed));
+
+               // Console.WriteLine(w_1[i].VarName + ": " + w_1[i].X);
             }
 
             for (int i = 1; i < w_2.Count; i++)
             {
                 if (w_2[i].X == 1)
-                    w.edges.Add(new Edge(i, multiGraph.edges[i - 1].to, multiGraph.edges[i - 1].from, this.conf.directed));
+                    w_edges.Add(new Edge(i, multiGraph.edges[i - 1].to, multiGraph.edges[i - 1].from, this.conf.directed));
+
+               // Console.WriteLine(w_2[i].VarName + ": " + w_2[i].X);
             }
 
 
             for (int i = 1; i < z_1.Count; i++)
             {
                 if (z_1[i].X == 1)
-                    z.edges.Add(new Edge(i, multiGraph.edges[i - 1].from, multiGraph.edges[i - 1].to, this.conf.directed));
+                    z_edges.Add(new Edge(i, multiGraph.edges[i - 1].from, multiGraph.edges[i - 1].to, this.conf.directed));
+
+              //  Console.WriteLine(z_1[i].VarName + ": " + z_1[i].X);
             }
 
             for (int i = 1; i < z_2.Count; i++)
             {
                 if (z_2[i].X == 1)
-                    z.edges.Add(new Edge(i, multiGraph.edges[i - 1].to, multiGraph.edges[i - 1].from, this.conf.directed));
+                    z_edges.Add(new Edge(i, multiGraph.edges[i - 1].to, multiGraph.edges[i - 1].from, this.conf.directed));
+
+
+             //   Console.WriteLine(z_2[i].VarName + ": " + z_2[i].X);
             }
 
+            var w = new Graph(multiGraph.nVertices, w_edges, false);
+            var z = new Graph(multiGraph.nVertices, z_edges, false);
+
+
+
             List<int> be = new List<int>();
-            for (int i = 2; i <= w.nVertices; i++)
+            for (int i = 1; i <= w.nVertices; i++)
             {
                 be.Add((int)betaVars[i].X);
+
+              //  Console.WriteLine(betaVars[i].VarName + ": " + betaVars[i].X);
             }
 
             List<int> al = new List<int>();
-            for (int i = 2; i <= z.nVertices; i++)
+            for (int i = 1; i <= z.nVertices; i++)
             {
                 al.Add((int)alphaVars[i].X);
+
+              //  Console.WriteLine(alphaVars[i].VarName + ": " + alphaVars[i].X);
             }
 
             var res = new string[2];
-            //  res[0] = w.FindCycle();
-            // res[1] = z.FindCycle();
+            res[0] = String.Join(",", w.FindCycle());
+            res[1] = String.Join(",", z.FindCycle());
+
+            bool b1 = input.x.CheckEqualCicle(w);
+            bool b2 = input.x.CheckEqualCicle(z);
+
+            bool b3 = input.y.CheckEqualCicle(w);
+            bool b4 = input.y.CheckEqualCicle(z);
+
+            if (b1 || b2 || b3 || b4)
+            {
+                throw new Exception("Bruh");
+            }
 
             return res;
         }
@@ -149,8 +190,8 @@ namespace GraphDecomposer.Solvers
             w_2.Add(new GRBVar());
             foreach (var edge in multiGraph.edges)
             {
-                w_1.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "w1" + edge.Id));
-                w_2.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "w2" + edge.Id));
+                w_1.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "w1_" + edge.Id));
+                w_2.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "w2_" + edge.Id));
             }
 
             z_1 = new List<GRBVar>();
@@ -159,8 +200,8 @@ namespace GraphDecomposer.Solvers
             z_2.Add(new GRBVar());
             foreach (var edge in multiGraph.edges)
             {
-                z_1.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "z1" + edge.Id));
-                z_2.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "z2" + edge.Id));
+                z_1.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "z1_" + edge.Id));
+                z_2.Add(model.AddVar(0.0, 1, 0.0, GRB.BINARY, "z2_" + edge.Id));
             }
 
 
@@ -173,7 +214,7 @@ namespace GraphDecomposer.Solvers
             for (int i = 1; i <= multiGraph.nVertices; i++)
             {
                 alphaVars.Add(model.AddVar(2, n, 0.0, GRB.INTEGER, "alpha " + i));
-                betaVars.Add(model.AddVar(2, n, 0.0, GRB.INTEGER, "bettah " + i));
+                betaVars.Add(model.AddVar(2, n, 0.0, GRB.INTEGER, "beta  " + i));
             }
         }
 

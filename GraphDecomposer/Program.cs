@@ -15,9 +15,9 @@ namespace GraphDecomposer
         static void Main(string[] args)
         {
             // TestDFDOptimized12();
-             var conf = ConfigurationParser.GetConfiguration("configuration.json");
-            //var conf2 = ConfigurationParser.GetAllTestsConfiguration();
-             DoConfigurationTesting(conf);
+            var conf = ConfigurationParser.GetConfiguration("configuration.json");
+           // var conf2 = ConfigurationParser.GetAllTestsConfiguration("allTests");
+            // DoConfigurationTesting(conf);
             // TestDFDOptimized3();
             // TestDFDOptimized1(conf);
             //TestDFDOptimized13_1(conf);
@@ -26,8 +26,8 @@ namespace GraphDecomposer
             //TestDFDOptimized13NoChainFix(conf);
 
             //TestDFD_LS_Directed(conf);
-            //TestDFD(conf);
-            //TestMTZ(conf2);
+           // TestDFD(conf);
+            TestMTZ(conf);
         }
 
 
@@ -40,6 +40,8 @@ namespace GraphDecomposer
             SolverMTZ solverMTZ = new SolverMTZ();
             foreach (var test in conf)
             {
+                if (test.runTest == false)
+                    continue;
                 if (test.model == "dfj")
                     DoTest(solverDFD, test);
                 else if (test.model == "dfj_ls")
@@ -292,9 +294,8 @@ namespace GraphDecomposer
             {
                 var test = conf[i];
                 test.model = "dfj";
-                test.directed = true;
-                if (!test.testFile.Contains("bi"))
-                    DoTest(solver, test);
+                test.directed = false;
+                DoTest(solver, test);
             }
         }
 
@@ -328,16 +329,12 @@ namespace GraphDecomposer
         static void TestMTZ(List<TestConfiguration> conf)
         {
             SolverMTZ solver = new SolverMTZ();
-            bool dd = false;
             for (int i = 0; i < conf.Count; i++)
             {
                 var test = conf[i];
                 test.model = "mtz";
                 test.directed = false;
-                if (!test.testFile.Contains("bi") && dd && test.testFile.Contains("4peaks"))
-                    DoTest(solver, test);
-                if (test.testFile.Contains("test1024_4peaks.txt"))
-                    dd = true;
+                DoTest(solver, test);
 
             }
         }
@@ -351,15 +348,18 @@ namespace GraphDecomposer
             Stopwatch timer = new Stopwatch();
             timer.Start();
             int cnt = 1;
-            Console.WriteLine(conf.testFile);
+            Console.WriteLine(conf.model + (conf.directed ?  " directed " : " undirected ") +  conf.testFile);
+
             foreach (var p in input)
             {
 
-
-
-                double totalHours = timer.ElapsedMilliseconds / (1000 * 60 * 60);
-                if (totalHours >= 2)
-                    break;
+            
+                double totalSeconds = timer.ElapsedMilliseconds / (1000);
+                if (conf.PackOfTestTimeout > 0)
+                {
+                    if (totalSeconds >= conf.PackOfTestTimeout)
+                        break;
+                }
                 Console.WriteLine("#running test " + cnt++);
 
                 Stopwatch timeTracker = new Stopwatch();
@@ -373,11 +373,11 @@ namespace GraphDecomposer
                 res.InitialZ = p.x;
                 res.InitialW = p.y;
                 results.addResult(res);
-
+     
 
             }
 
-            results.printResults();
+             results.printResults();
         }
 
     }

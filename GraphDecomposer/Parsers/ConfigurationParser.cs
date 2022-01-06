@@ -18,7 +18,13 @@ namespace GraphDecomposer.Parsers
             bool directed = dinamic["directed"];
             string model = dinamic["model"];
             string dir = dinamic["TestsDirectory"];
+            int singleTestTimeout = dinamic["SingleTestTimeout"];
+            int PackOfTestTimeout = dinamic["PackOfTestTimeout"];
+            bool run = false;
 
+            string startWith = dinamic["StartWith"];
+            if (startWith == "")
+                run = true;
             List<TestConfiguration> conf;
             if (dir == "")
                 conf = array.ToObject<List<TestConfiguration>>();
@@ -30,6 +36,13 @@ namespace GraphDecomposer.Parsers
                 var a = conf[i];
                 a.directed = directed;
                 a.model = model;
+                a.runTest = run;
+                a.SingleTestTimeout = singleTestTimeout;
+                a.PackOfTestTimeout = PackOfTestTimeout;
+                if (a.testFile.Contains(startWith))
+                    run = true;
+
+
                 conf[i] = a;
             }
             return conf;

@@ -33,7 +33,7 @@ namespace GraphDecomposer.DataStructures
             {
                 int id = i + 1;
 
-                var edge = new Edge(id, x.edges[i].from, x.edges[i].to, directed);
+                var edge = new Edge(id, x.edges[i].from, x.edges[i].to, x.directed);
 
                 this.edges.Add(edge);
                 this.edgesFrom[x.edges[i].from].Add(edge);
@@ -50,7 +50,7 @@ namespace GraphDecomposer.DataStructures
             for (int i = 0; i < y.edges.Count; i++)
             {
                 int id = x.edges.Count + i + 1;
-                var edge = new Edge(id, y.edges[i].from, y.edges[i].to, directed);
+                var edge = new Edge(id, y.edges[i].from, y.edges[i].to, y.directed);
                 this.edges.Add(edge);
                 this.edgesFrom[y.edges[i].from].Add(edge);
 

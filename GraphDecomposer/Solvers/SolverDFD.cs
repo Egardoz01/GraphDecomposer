@@ -50,6 +50,8 @@ namespace GraphDecomposer
 
             var res = doIterations();
 
+            model.Write("model_dfj_log.lp");
+
             model.Dispose();
 
 
@@ -65,9 +67,9 @@ namespace GraphDecomposer
 
                 model.Optimize();
 
-                double totalHours = timer.ElapsedMilliseconds / (1000 * 60 * 60);
+                double totalseconds = timer.ElapsedMilliseconds / (1000);
                 bool hasSol = model.SolCount > 0;
-                if (!hasSol || totalHours >= 2)
+                if (!hasSol || conf.PackOfTestTimeout>0 && totalseconds >= conf.PackOfTestTimeout)
                     return new SolverResult(iterationsCnt, false, null, null);// no solution
 
 

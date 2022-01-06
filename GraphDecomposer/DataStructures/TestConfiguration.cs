@@ -20,7 +20,9 @@ namespace GraphDecomposer.DataStructures
         public bool noChainFix;
         public int recursionDepth;
         public int thirdNeighborhoodType;
-
+        public bool runTest;
+        public int PackOfTestTimeout;
+        public int SingleTestTimeout;
     }
 
    

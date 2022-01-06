@@ -46,10 +46,11 @@ namespace GraphDecomposer.Solvers
 
             addOrderConstrs();
 
-            model.Parameters.TimeLimit = 10 * 60;
+            if (conf.SingleTestTimeout > 0)
+                model.Parameters.TimeLimit = conf.SingleTestTimeout;
             model.Optimize();
 
-
+            model.Write("model_mtz_directed_log.lp");
 
 
             SolverResult res = new SolverResult();

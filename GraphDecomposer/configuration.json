@@ -1,17 +1,17 @@
 ﻿{
-  "model": "dfj_ls",
-  "directed": false,
-  "TestsDirectory": "allTests",
+  "model": "dfj",
+  "directed": true,
+  "TestsDirectory": "",
+  "StartWith": "",
+  "PackOfTestTimeout": 7200,
+  "SingleTestTimeout": 600,
   "tests": [
     {
-      "nVertices": 256,
-      "nTests": 100,
-      "testFile": "allTests\\test512.txt"
-    },
-    {
       "nVertices": 128,
-      "nTests": 100,
-      "testFile": "allTests\\test512_4peaks.txt"
+      "nTests": 1,
+      "testFile": "InputData\\SimpleInput.txt"
+      //"testFile": "InputData\\test128inf.txt"
     }
+
   ]
 }
