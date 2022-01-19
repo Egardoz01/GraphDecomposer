@@ -52,7 +52,7 @@ namespace GraphDecomposer.Solvers
             if (conf.SingleTestTimeout > 0)
                 model.Parameters.TimeLimit = conf.SingleTestTimeout;
 
-            model.Write("model_mtz_undirected_log.lp");
+         //   model.Write("model_mtz_undirected_log.lp");
 
             model.Optimize();
 

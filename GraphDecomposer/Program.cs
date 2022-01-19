@@ -6,7 +6,9 @@ using Gurobi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace GraphDecomposer
 {
@@ -16,8 +18,8 @@ namespace GraphDecomposer
         {
             // TestDFDOptimized12();
             var conf = ConfigurationParser.GetConfiguration("configuration.json");
-           // var conf2 = ConfigurationParser.GetAllTestsConfiguration("allTests");
-            // DoConfigurationTesting(conf);
+            //var conf2 = ConfigurationParser.GetAllTestsConfiguration("allTests");
+            DoConfigurationTesting(conf);
             // TestDFDOptimized3();
             // TestDFDOptimized1(conf);
             //TestDFDOptimized13_1(conf);
@@ -26,8 +28,8 @@ namespace GraphDecomposer
             //TestDFDOptimized13NoChainFix(conf);
 
             //TestDFD_LS_Directed(conf);
-           // TestDFD(conf);
-            TestMTZ(conf);
+            //TestDFD_5Cycles(conf);
+            // TestMTZ(conf2);
         }
 
 
@@ -38,16 +40,19 @@ namespace GraphDecomposer
             SolverDFD solverDFD = new SolverDFD();
             SolverDFDOptimized solverDFD_LS = new SolverDFDOptimized();
             SolverMTZ solverMTZ = new SolverMTZ();
+
+            SolverDFD_5_cycles solver5_Cycles = new SolverDFD_5_cycles();
+
             foreach (var test in conf)
             {
                 if (test.runTest == false)
                     continue;
                 if (test.model == "dfj")
-                    DoTest(solverDFD, test);
+                    DoTest_5_cycles(solverDFD, solver5_Cycles, test);
                 else if (test.model == "dfj_ls")
-                    DoTest(solverDFD_LS, test);
+                    DoTest_5_cycles(solverDFD_LS, solver5_Cycles, test);
                 if (test.model == "mtz")
-                    DoTest(solverMTZ, test);
+                    DoTest_5_cycles(solverMTZ, solver5_Cycles, test);
             }
         }
 
@@ -299,6 +304,20 @@ namespace GraphDecomposer
             }
         }
 
+
+        static void TestDFD_5Cycles(List<TestConfiguration> conf)
+        {
+            SolverDFD solver1 = new SolverDFD();
+            SolverDFD_5_cycles solver2 = new SolverDFD_5_cycles();
+            for (int i = 0; i < conf.Count; i++)
+            {
+                var test = conf[i];
+                test.model = "dfj";
+                test.directed = true;
+                DoTest_5_cycles(solver1, solver2, test);
+            }
+        }
+
         static void TestDFD_Directed(List<TestConfiguration> conf)
         {
             SolverDFD solver = new SolverDFD();
@@ -326,20 +345,6 @@ namespace GraphDecomposer
             }
         }
 
-        static void TestMTZ(List<TestConfiguration> conf)
-        {
-            SolverMTZ solver = new SolverMTZ();
-            for (int i = 0; i < conf.Count; i++)
-            {
-                var test = conf[i];
-                test.model = "mtz";
-                test.directed = false;
-                DoTest(solver, test);
-
-            }
-        }
-
-
         static void DoTest(ISolver solver, TestConfiguration conf)
         {
             InputParser input = new InputParser(conf.testFile, conf.nTests, conf.directed);
@@ -348,12 +353,12 @@ namespace GraphDecomposer
             Stopwatch timer = new Stopwatch();
             timer.Start();
             int cnt = 1;
-            Console.WriteLine(conf.model + (conf.directed ?  " directed " : " undirected ") +  conf.testFile);
+            Console.WriteLine(conf.model + (conf.directed ? " directed " : " undirected ") + conf.testFile);
 
             foreach (var p in input)
             {
 
-            
+
                 double totalSeconds = timer.ElapsedMilliseconds / (1000);
                 if (conf.PackOfTestTimeout > 0)
                 {
@@ -373,12 +378,57 @@ namespace GraphDecomposer
                 res.InitialZ = p.x;
                 res.InitialW = p.y;
                 results.addResult(res);
-     
+
 
             }
 
-             results.printResults();
+            results.printResults();
         }
+
+        static void DoTest_5_cycles(ISolver solver, ISolver solver5Cycles, TestConfiguration conf)
+        {
+            InputParser input = new InputParser(conf.testFile, conf.nTests, conf.directed);
+
+            ResultAnalyses results = new ResultAnalyses(conf);
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+            int cnt = 1;
+            Console.WriteLine(conf.model + (conf.directed ? " directed " : " undirected ") + conf.testFile);
+
+            foreach (var p in input)
+            {
+                double totalSeconds = timer.ElapsedMilliseconds / (1000);
+                if (conf.PackOfTestTimeout > 0)
+                {
+                    if (totalSeconds >= conf.PackOfTestTimeout)
+                        break;
+                }
+                Console.WriteLine("#running test " + cnt++);
+
+                Stopwatch timeTracker = new Stopwatch();
+                timeTracker.Start();
+
+                var res = solver.SolveTest(p, conf, timer);
+
+                if (conf.FiveCyclesSearch)
+                {
+                    if (!res.solutionExistance)
+                    {
+                        res = solver5Cycles.SolveTest(p, conf, timer);
+                    }
+                }
+
+                timeTracker.Stop();
+                res.millisecondsElapsed = timeTracker.ElapsedMilliseconds;
+                res.InitialZ = p.x;
+                res.InitialW = p.y;
+
+                results.addResult(res);
+            }
+
+            results.printResults();
+        }
+
 
     }
 }

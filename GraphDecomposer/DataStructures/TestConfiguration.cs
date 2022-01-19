@@ -23,6 +23,7 @@ namespace GraphDecomposer.DataStructures
         public bool runTest;
         public int PackOfTestTimeout;
         public int SingleTestTimeout;
+        public bool FiveCyclesSearch;
     }
 
    

@@ -10,13 +10,13 @@ namespace GraphDecomposer
 {
     public class SolverDFD : ISolver
     {
-        private GRBEnv env;
+        protected private GRBEnv env;
         protected Multigraph multiGraph;
         protected GRBModel model;
         protected List<GRBVar> variables;
         protected TestConfiguration conf;
         protected TestInput testInput;
-        int ciclesCnt = 0;
+        protected int ciclesCnt = 0;
         protected Stopwatch timer;
         public SolverDFD()
         {
@@ -28,7 +28,7 @@ namespace GraphDecomposer
         }
 
 
-        public SolverResult SolveTest(TestInput input, TestConfiguration conf, Stopwatch timer)
+        public virtual SolverResult SolveTest(TestInput input, TestConfiguration conf, Stopwatch timer)
         {
             testInput = input;
             this.conf = conf;
@@ -50,7 +50,7 @@ namespace GraphDecomposer
 
             var res = doIterations();
 
-            model.Write("model_dfj_log.lp");
+          //  model.Write("model_dfj_log.lp");
 
             model.Dispose();
 
@@ -110,7 +110,7 @@ namespace GraphDecomposer
        
        
 
-        private void addVariables()
+        protected void addVariables()
         {
             variables = new List<GRBVar>();
             variables.Add(new GRBVar());
@@ -120,7 +120,7 @@ namespace GraphDecomposer
             }
         }
 
-        private void addVariablesConstr()
+        protected void addVariablesConstr()
         {
             for (int i = 1; i <= multiGraph.nVertices; i++)
             {
@@ -187,7 +187,7 @@ namespace GraphDecomposer
             model.AddConstr(expr >= E_s.Count - S.Count + 1, "cicle constr " + ciclesCnt++);
         }
 
-        private void addXGraphConstr()
+        protected void addXGraphConstr()
         {
             GRBLinExpr xExpr = new GRBLinExpr();
             foreach (var edge in multiGraph.xEdges)
@@ -198,7 +198,7 @@ namespace GraphDecomposer
             model.AddConstr(xExpr <= multiGraph.xEdges.Count - 1, "X Edges constr");
         }
 
-        private void addYGraphConstr()
+        protected void addYGraphConstr()
         {
             GRBLinExpr yExpr = new GRBLinExpr();
             foreach (var edge in multiGraph.yEdges)

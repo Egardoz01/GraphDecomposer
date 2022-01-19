@@ -1,15 +1,16 @@
 ﻿{
-  "model": "dfj",
+  "model": "dfj_ls",
   "directed": true,
   "TestsDirectory": "",
   "StartWith": "",
+  "FiveCyclesSearch": false,
   "PackOfTestTimeout": 7200,
   "SingleTestTimeout": 600,
   "tests": [
     {
-      "nVertices": 128,
-      "nTests": 1,
-      "testFile": "InputData\\SimpleInput.txt"
+      "nVertices": 192,
+      "nTests": 100,
+      "testFile": "allTests\\test192.txt"
       //"testFile": "InputData\\test128inf.txt"
     }
 

@@ -20,6 +20,8 @@ namespace GraphDecomposer.Parsers
             string dir = dinamic["TestsDirectory"];
             int singleTestTimeout = dinamic["SingleTestTimeout"];
             int PackOfTestTimeout = dinamic["PackOfTestTimeout"];
+            bool FiveCyclesSearch = dinamic["FiveCyclesSearch"];
+
             bool run = false;
 
             string startWith = dinamic["StartWith"];
@@ -39,6 +41,8 @@ namespace GraphDecomposer.Parsers
                 a.runTest = run;
                 a.SingleTestTimeout = singleTestTimeout;
                 a.PackOfTestTimeout = PackOfTestTimeout;
+                a.FiveCyclesSearch = FiveCyclesSearch;
+
                 if (a.testFile.Contains(startWith))
                     run = true;
 
