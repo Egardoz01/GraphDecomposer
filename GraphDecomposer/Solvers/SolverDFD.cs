@@ -16,7 +16,7 @@ namespace GraphDecomposer
         protected List<GRBVar> variables;
         protected TestConfiguration conf;
         protected TestInput testInput;
-        protected int ciclesCnt = 0;
+        protected int cyclesCnt = 0;
         protected Stopwatch timer;
         public SolverDFD()
         {
@@ -33,7 +33,7 @@ namespace GraphDecomposer
             testInput = input;
             this.conf = conf;
             this.timer = timer;
-            ciclesCnt = 0;
+            cyclesCnt = 0;
 
             model = new GRBModel(env);
 
@@ -183,8 +183,8 @@ namespace GraphDecomposer
                 expr.AddTerm(1, variables[index]);
             }
 
-            model.AddConstr(expr <= S.Count - 1, "cicle constr " + ciclesCnt++);
-            model.AddConstr(expr >= E_s.Count - S.Count + 1, "cicle constr " + ciclesCnt++);
+            model.AddConstr(expr <= S.Count - 1, "cicle constr " + cyclesCnt++);
+            model.AddConstr(expr >= E_s.Count - S.Count + 1, "cicle constr " + cyclesCnt++);
         }
 
         protected void addXGraphConstr()

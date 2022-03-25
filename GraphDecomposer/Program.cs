@@ -66,7 +66,7 @@ namespace GraphDecomposer
                 var test = conf[i];
                 test.model = "dfd+ls 0-1";
                 test.firstNeighbourhood = true;
-                test.zeroNeighbour = true;
+                test.zeroNeighbourhood = true;
                 DoTest(solver, test);
             }
         }
@@ -81,7 +81,7 @@ namespace GraphDecomposer
                 var test = conf[i];
                 test.model = "dfd+ls 0-1-2";
                 test.firstNeighbourhood = true;
-                test.zeroNeighbour = true;
+                test.zeroNeighbourhood = true;
                 test.secondNeighbour = true;
                 DoTest(solver, test);
             }
@@ -125,7 +125,7 @@ namespace GraphDecomposer
             {
                 var test = conf[i];
                 test.model = "dfd+ls 0-2";
-                test.zeroNeighbour = true;
+                test.zeroNeighbourhood = true;
                 test.secondNeighbour = true;
                 DoTest(solver, test);
             }
@@ -140,7 +140,7 @@ namespace GraphDecomposer
             {
                 var test = conf[i];
                 test.model = "dfd+ls 0";
-                test.zeroNeighbour = true;
+                test.zeroNeighbourhood = true;
                 DoTest(solver, test);
             }
         }
@@ -237,7 +237,7 @@ namespace GraphDecomposer
             for (int i = 0; i < conf.Count; i++)
             {
                 var test = conf[i];
-                test.zeroNeighbour = true;
+                test.zeroNeighbourhood = true;
                 test.firstNeighbourhood = true;
                 test.thirdNeighbourhood = true;
                 test.model = "dfd+ls 0 1 3";
@@ -253,8 +253,8 @@ namespace GraphDecomposer
             for (int i = 0; i < conf.Count; i++)
             {
                 var test = conf[i];
-                test.zeroNeighbour = true;
-                test.zeroNeighbour = true;
+                test.zeroNeighbourhood = true;
+                test.zeroNeighbourhood = true;
                 test.thirdNeighbourhood = true;
                 test.model = "dfd+ls 0 1 3";
                 DoTest(solver, test);

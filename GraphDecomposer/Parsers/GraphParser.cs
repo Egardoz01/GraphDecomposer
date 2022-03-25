@@ -24,7 +24,7 @@ namespace GraphDecomposer
             edges.Add(new Edge(vertices.Count, vertices[vertices.Count - 1], vertices[0], directed));
 
 
-            Graph g = new Graph(vertices.Count(), edges, false);
+            Graph g = new Graph(vertices.Count(), edges, directed);
             return g;
         }
 

@@ -19,6 +19,8 @@ namespace GraphDecomposer
 
                 graphs = new List<TestInput>();
                 int cur = 0;
+                if (nProblems == -1)
+                    nProblems = (lines.Length + 1) / 3;
                 for (int i = 0; i < nProblems; i++)
                 {
                     TestInput input = new TestInput();

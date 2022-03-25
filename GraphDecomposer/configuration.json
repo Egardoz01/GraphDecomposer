@@ -1,17 +1,21 @@
 ﻿{
-  "model": "dfj_ls",
+  "model": "dfj",
   "directed": true,
-  "TestsDirectory": "",
-  "StartWith": "",
-  "FiveCyclesSearch": false,
+  "TestsDirectory": "allTests",
+  "StartWith": "test768.txt",
+  "FiveCyclesSearch": true,
+  "zeroNeighbourhood": false,
+  "firstNeighbourhood": true,
+  "secondNeighbour": false,
+  "thirdNeighbourhood": false,
+  "thirdNeighborhoodType": 3,
   "PackOfTestTimeout": 7200,
   "SingleTestTimeout": 600,
   "tests": [
     {
-      "nVertices": 192,
-      "nTests": 100,
-      "testFile": "allTests\\test192.txt"
-      //"testFile": "InputData\\test128inf.txt"
+      "nVertices": 9,
+      "nTests": 1,
+      "testFile": "InputData\\SimpleInput.txt"
     }
 
   ]

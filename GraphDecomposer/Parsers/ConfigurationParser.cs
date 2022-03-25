@@ -22,6 +22,12 @@ namespace GraphDecomposer.Parsers
             int PackOfTestTimeout = dinamic["PackOfTestTimeout"];
             bool FiveCyclesSearch = dinamic["FiveCyclesSearch"];
 
+            bool zeroNeighbourhood = dinamic["zeroNeighbourhood"];
+            bool firstNeighbourhood = dinamic["firstNeighbourhood"];
+            bool secondNeighbour = dinamic["secondNeighbour"];
+            bool thirdNeighbourhood = dinamic["thirdNeighbourhood"];
+            int thirdNeighborhoodType = dinamic["thirdNeighborhoodType"];
+
             bool run = false;
 
             string startWith = dinamic["StartWith"];
@@ -43,6 +49,12 @@ namespace GraphDecomposer.Parsers
                 a.PackOfTestTimeout = PackOfTestTimeout;
                 a.FiveCyclesSearch = FiveCyclesSearch;
 
+                a.zeroNeighbourhood = zeroNeighbourhood;
+                a.firstNeighbourhood = firstNeighbourhood;
+                a.secondNeighbour = secondNeighbour;
+                a.thirdNeighbourhood = thirdNeighbourhood;
+                a.thirdNeighborhoodType = thirdNeighborhoodType;
+
                 if (a.testFile.Contains(startWith))
                     run = true;
 
@@ -63,7 +75,7 @@ namespace GraphDecomposer.Parsers
 
                 TestConfiguration test = new TestConfiguration();
                 test.directed = false;
-                test.nTests = 100;
+                test.nTests = -1;
                 test.testFile = file;
                 test.nVertices = getNVertices(file);
                 conf.Add(test);

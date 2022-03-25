@@ -16,7 +16,7 @@ namespace GraphDecomposer.LocalSearch
 
         public override bool DoLocalSearch()
         {
-            if (conf.zeroNeighbour)
+            if (conf.zeroNeighbourhood)
                 return ZeroNeighborhood();
             else if (conf.firstNeighbourhood)
                 return FirstNeighborhood();

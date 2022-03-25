@@ -14,7 +14,7 @@ namespace GraphDecomposer.DataStructures
         public int solvable;
         public int unsolvable;
         public bool secondNeighbour;
-        public bool zeroNeighbour;
+        public bool zeroNeighbourhood;
         public bool firstNeighbourhood;
         public bool thirdNeighbourhood;
         public bool noChainFix;

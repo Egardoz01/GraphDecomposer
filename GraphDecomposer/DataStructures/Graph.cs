@@ -225,7 +225,7 @@ namespace GraphDecomposer
             usedEdges = new List<bool>();
             usedVertices = new List<bool>();
 
-            for (int i = 0; i <= this.nVertices * 2; i++)
+            for (int i = 0; i <= this.nEdges * 2; i++)
                 usedEdges.Add(false);
 
             for (int i = 0; i <= this.nVertices; i++)
@@ -237,7 +237,7 @@ namespace GraphDecomposer
                 {
                     currentCicle = new List<Edge>();
                     dfs(i);
-                    if ((currentCicle.Count < edges.Count ) && currentCicle.Count > 0)
+                    if ((currentCicle.Count < edges.Count || allCicles) && currentCicle.Count > 0)
                     {
                         var last = currentCicle[currentCicle.Count - 1];
                         if (last.to != i && last.from != i)

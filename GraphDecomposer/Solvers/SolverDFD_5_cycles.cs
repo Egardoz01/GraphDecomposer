@@ -12,16 +12,19 @@ namespace GraphDecomposer.Solvers
         int iterationsCnt;
         public SolverDFD_5_cycles() : base() { }
 
+        private List<Edge> doubleEdges;
         public override SolverResult SolveTest(TestInput input, TestConfiguration conf, Stopwatch timer)
         {
             testInput = input;
             this.conf = conf;
             this.timer = timer;
-            ciclesCnt = 0;
+            cyclesCnt = 0;
 
             model = new GRBModel(env);
 
             multiGraph = new Multigraph(input.x, input.y, conf.directed);
+
+            doubleEdges = input.x.FindDoubleEdges(input.y);
 
             addVariables();
 
@@ -33,7 +36,7 @@ namespace GraphDecomposer.Solvers
 
             iterationsCnt = 0;
 
-           // model.Write("model_dfj_5_cycles_log.lp");
+            model.Write("model_dfj_5_cycles_log.lp");
 
             Graph z=null, w=null, q=null;
             z = doIterations();
@@ -73,17 +76,45 @@ namespace GraphDecomposer.Solvers
 
                 Graph z = new Graph(multiGraph.nVertices, z_Edges, conf.directed);
 
-                var zSubCicles = z.findSubCicles(true);
+                var zSubCicles = z.findSubCicles();
 
                 foreach (var cicle in zSubCicles)
-                    addCicleConstr(cicle);
+                    addCycleConstr(cicle);
 
-                if (zSubCicles.Count == 1)
+                if (zSubCicles.Count == 0)
+                {
+                    addHamiltonCycleConstr(z.edges);
                     return z;// yes solution
+                }
             }
         }
 
-        private new void addCicleConstr(List<Edge> cicle)
+        private void addHamiltonCycleConstr(List<Edge> edges)
+        {
+            HashSet<Edge> S = new HashSet<Edge>();
+            foreach (var edge in edges)
+            {
+                S.Add(edge);
+            }
+
+            foreach (var edge in doubleEdges)
+            {
+                S.Remove(edge);
+            }
+
+
+            GRBLinExpr expr = new GRBLinExpr();
+            foreach (var edge in S)
+            {
+                int index = edge.Id;
+                expr.AddTerm(1, variables[index]);
+            }
+
+            model.AddConstr(expr <= S.Count - 1, "Hamilton cycle constr " + cyclesCnt++);
+
+        }
+
+        private new void addCycleConstr(List<Edge> cicle)
         {
             HashSet<int> S = new HashSet<int>();
 
@@ -108,7 +139,7 @@ namespace GraphDecomposer.Solvers
                 expr.AddTerm(1, variables[index]);
             }
 
-            model.AddConstr(expr <= S.Count - 1, "cicle constr " + ciclesCnt++);
+            model.AddConstr(expr <= S.Count - 1, "cycle constr " + cyclesCnt++);
         }
 
 
